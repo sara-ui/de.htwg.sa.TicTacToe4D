@@ -149,27 +149,27 @@ class Controller (var game: GameInterface,
 }
 
 object Messages {
-  val CELL_IS_SET: String = "This Cell is Already been setted, please try another one \n"
-  val USER_ERROR: String = "Please give the two players names \n"
-  val ENTER_PLAYERS: String = "please enter the two players name with - between then (don't forget no spacing)"
+  val CELL_IS_SET: String = "This Cell has already been set, please try another Cell\n"
+  val USER_ERROR: String = "Please enter the player names\n"
+  val ENTER_PLAYERS: String = "Please enter two players with - between then (don't forget no spacing)"
   val WELCOME_MESSAGE: String = "Welcome to HTWG TicTacToe 4x4x4! \n" + ENTER_PLAYERS
-  val PLAYER_NAME: String = "please enter players name again"
-  val PLAYER_DEFINED_MESSAGE: String = "Players are defined!!!! \n"
-  val INFO_ABOUT_THE_GAME: String = " you can start, the grids with the number in them are\n" +
-    " an example of what you should give here if you want to player in one of the cells,\n" +
-    " the 3 numbers are the row, column, grid. Now, MAKE YOU FIRST MOVE :) !!\n"
-  val ERROR_GIVE_PLAYERS_START: String = "you can't start the Game without giving the name of the players\n" + ENTER_PLAYERS
-  val ERROR_MOVE: String = "you are out of the limit of the grid!! please retry with correct move"
+  val PLAYER_NAME: String = "Please enter players name again"
+  val PLAYER_DEFINED_MESSAGE: String = "Players are defined!!!\n"
+  val INFO_ABOUT_THE_GAME: String = " you can start. The grids with the number in them are\n" +
+    " an example of what you should enter if you want place a your marker in this cell.\n" +
+    " The 3 numbers are row, column and grid. Now, MAKE YOUR FIRST MOVE :)\n"
+  val ERROR_GIVE_PLAYERS_START: String = "You can't start the Game without giving the name of the players\n" + ENTER_PLAYERS
+  val ERROR_MOVE: String = "No viable Cell number!!! Please retry with the correct move"
   val NEXT: String = " you are next!! \n press z to undo"
   val YOU_ARE_NEXT: String = " you are next!! \n"
-  val GAME_RESET_MESSAGE: String = "Game was reseted!!!! \n"
-  val ERROR_GIVE_PLAYERS_RESET: String = "you can't reset the Game without giving the name of the players\n" + ENTER_PLAYERS
-  val WIN_MESSAGE: String = " you won !! congratulation \n "+ " if you want to start again press r + enter, if not press q + enter to quit"
-  val UNDO_STEP: String = "you just undid your step, you can replay or press y to redo"
-  val REDO_STEP: String = "you just redid your step, thanks"
+  val GAME_RESET_MESSAGE: String = "Game has been reset!!!! \n"
+  val ERROR_GIVE_PLAYERS_RESET: String = "You can't reset the Game without giving the name of the players\n" + ENTER_PLAYERS
+  val WIN_MESSAGE: String = " you won !! Congratulations \n "+ " If you want to start again press r + enter, if not press q + enter to quit"
+  val UNDO_STEP: String = "You just undid your step, you can replay or press y to redo"
+  val REDO_STEP: String = "You just redid your step, thanks"
   val TITLE: String = "TicTacToe 4x4x4"
-  val GAME_SAVED: String = "Game is Saved"
+  val GAME_SAVED: String = "Game is saved"
   val GAME_LOADED: String = "Game is loaded"
-  val MOVEMENT: String = "To move the Grids : Please use the arrows\n\n"
+  val MOVEMENT: String = "To move the Grids: Please use the arrows\n\n"
   def playerMoveToString(player: String, row: Int, column: Int, grid: Int): String = player + " played : (" + row + "," + column + ") in Grid " + grid + "\n"
 }

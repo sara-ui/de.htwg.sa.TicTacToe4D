@@ -1,15 +1,10 @@
 package de.htwg.se.ticTacToe3D.model
 
-class OneDGridsStateStrategy(var rowGridScore: List[Array[Int]],
-                             var colsGridScore: List[Array[Int]],
-                             var diagGridScore: List[Array[Int]])
+case class OneDGridsStateStrategy(rowGridScore: List[Array[Int]] = List.fill(4)(Array(0, 0, 0, 0)),
+                             colsGridScore: List[Array[Int]] = List.fill(4)(Array(0, 0, 0, 0)),
+                             diagGridScore: List[Array[Int]] = List.fill(4)(Array(0, 0)))
   extends WinStateStrategyTemplate {
 
-  def this() = {
-    this(List.fill(4)(Array(0, 0, 0, 0)),
-      List.fill(4)(Array(0, 0, 0, 0)),
-      List.fill(4)(Array(0, 0)))
-  }
   override def checkRow(row: Int, grid: Int): Boolean = {
     this.rowGridScore(grid)(row) += 1
     this.rowGridScore(grid)(row) == numberToWin

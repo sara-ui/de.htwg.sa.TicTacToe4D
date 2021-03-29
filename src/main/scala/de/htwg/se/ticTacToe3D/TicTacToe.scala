@@ -13,7 +13,7 @@ object TicTacToe {
   var controller: ControllerInterface = injector.getInstance(classOf[ControllerInterface])
 
   val tui = new Tui(controller)
-  // val gui = new TicTacToeGUI(controller)
+  val gui = new TicTacToeGUI(controller)
   controller.notifyObservers
 
   def main(args: Array[String]): Unit = {
