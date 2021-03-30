@@ -2,8 +2,8 @@ package de.htwg.se.ticTacToe3D.model
 
 case class FourDGridsStateStrategy(verticalColumn: Array[Array[Int]] =
                                    Array.tabulate(4, 4)((row, col) => 0),
-                              diagOfAllGrids: List[Array[Array[Int]]] =
-                              List.fill(4)(Array.tabulate(4, 4) { (row, col) => 0}))
+                                   diagOfAllGrids: List[Array[Array[Int]]] =
+                                   List.fill(4)(Array.tabulate(4, 4) { (row, col) => 0}))
   extends WinStateStrategyTemplate {
 
   def checkCell(dir: String)(row: Int, column: Int, i : Int, j: Int, k : Int): Boolean = {

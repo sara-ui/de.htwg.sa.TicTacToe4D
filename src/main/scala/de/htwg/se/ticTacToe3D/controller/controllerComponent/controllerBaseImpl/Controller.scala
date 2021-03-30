@@ -10,9 +10,10 @@ import de.htwg.se.ticTacToe3D.model.{FactoryProducer, WinStateStrategyTemplate}
 import de.htwg.se.ticTacToe3D.util.UndoManager
 
 class Controller (var game: GameInterface,
-                            var oneGridStrategy: Array[WinStateStrategyTemplate],
-                            var allGridStrategy : Array[WinStateStrategyTemplate])
+                  var oneGridStrategy: Array[WinStateStrategyTemplate],
+                  var allGridStrategy : Array[WinStateStrategyTemplate])
   extends ControllerInterface {
+
   private val undoManager = new UndoManager
   val injector = Guice.createInjector(new TicTacToeModule)
   val fileIo = injector.getInstance(classOf[FileIOInterface])

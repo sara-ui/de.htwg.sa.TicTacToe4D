@@ -2,7 +2,11 @@ package de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl
 
 import de.htwg.se.ticTacToe3D.model.gameComponent.GridInterface
 
-case class Grid(cells: Vector[Vector[Cell]] = Vector.tabulate(4, 4) { (row, col) => new Cell()}) extends GridInterface {
+case class Grid(
+                 cells: Vector[Vector[Cell]] =
+                 Vector.tabulate(4, 4) { (row, col) => new Cell()})
+  extends GridInterface {
+
   val size: Int = cells.size
 
   def cell(row: Int, col: Int): Cell = cells(row)(col)

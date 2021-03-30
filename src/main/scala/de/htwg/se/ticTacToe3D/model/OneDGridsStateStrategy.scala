@@ -1,8 +1,8 @@
 package de.htwg.se.ticTacToe3D.model
 
 case class OneDGridsStateStrategy(rowGridScore: List[Array[Int]] = List.fill(4)(Array(0, 0, 0, 0)),
-                             colsGridScore: List[Array[Int]] = List.fill(4)(Array(0, 0, 0, 0)),
-                             diagGridScore: List[Array[Int]] = List.fill(4)(Array(0, 0)))
+                                  colsGridScore: List[Array[Int]] = List.fill(4)(Array(0, 0, 0, 0)),
+                                  diagGridScore: List[Array[Int]] = List.fill(4)(Array(0, 0)))
   extends WinStateStrategyTemplate {
 
   def setGridScore(score: List[Array[Int]])(cell: Int, grid: Int): Boolean = {
