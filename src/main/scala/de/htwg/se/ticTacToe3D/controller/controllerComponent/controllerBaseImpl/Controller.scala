@@ -17,6 +17,10 @@ class Controller (var game: GameInterface,
   private val undoManager = new UndoManager
   val injector = Guice.createInjector(new TicTacToeModule)
   val fileIo = injector.getInstance(classOf[FileIOInterface])
+  var won: Array[Boolean] = Array(false, false)
+  var myTurn: Boolean = true
+  var statusMessage: String = Messages.WELCOME_MESSAGE
+
   @Inject()
   def this (game: GameInterface) {
     this(game,
@@ -28,9 +32,6 @@ class Controller (var game: GameInterface,
     true
   }
 
-  var won: Array[Boolean] = Array(false, false)
-  var myTurn: Boolean = true
-  var statusMessage: String = Messages.WELCOME_MESSAGE
   def checkData(row: Int, column: Int, grid: Int): Boolean = {
     if(row > 3 || column > 3 || grid > 3){
       statusMessage =  Messages.ERROR_MOVE
