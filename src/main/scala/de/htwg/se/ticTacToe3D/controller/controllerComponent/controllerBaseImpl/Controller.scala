@@ -9,6 +9,8 @@ import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
 import de.htwg.se.ticTacToe3D.model.{FactoryProducer, WinStateStrategyTemplate}
 import de.htwg.se.ticTacToe3D.util.UndoManager
 
+import scala.util.{Failure, Success, Try}
+
 class Controller (var game: GameInterface,
                   var oneGridStrategy: Array[WinStateStrategyTemplate],
                   var allGridStrategy : Array[WinStateStrategyTemplate])
@@ -39,13 +41,15 @@ class Controller (var game: GameInterface,
     }
     true
   }
-  def checkForWin(i: Int, row: Int, column: Int, grid: Int): Boolean = {
-    won(i) = oneGridStrategy(i).checkForWin(row, column, grid) || allGridStrategy(i).checkForWin(row, column, grid)
-    if(won(i)) {
+  def checkForWin(i: Int, row: Int, column: Int, grid: Int): Try[Boolean] = {
+    val testWon = (i:Int) => Try(oneGridStrategy(i).checkForWin(row,column,grid))
+    val testWon2 = (i: Int) => Try(allGridStrategy(i).checkForWin(row, column, grid))
+    if(testWon(i).isSuccess || testWon2(i).isSuccess) {
       this.statusMessage = game.players(i).name + Messages.WIN_MESSAGE
       notifyObservers
+      return Success(true)
     }
-    true
+    Failure(new Exception(Messages.WIN_ERROR))
   }
 
   def save = {
@@ -70,10 +74,10 @@ class Controller (var game: GameInterface,
     if (checkData(row, column, grid)) {
       if(myTurn){
         tryToMove(0, row, column, grid)
-        checkForWin(0, row, column, grid)
+        Try(checkForWin(0, row, column, grid))
       }else{
         tryToMove(1, row, column, grid)
-        checkForWin(1, row, column, grid)
+        Try(checkForWin(1, row, column, grid))
       }
       myTurn = !myTurn
     }
@@ -155,6 +159,7 @@ object Messages {
   val ENTER_PLAYERS: String = "Please enter two players with - between then (don't forget no spacing)"
   val WELCOME_MESSAGE: String = "Welcome to HTWG TicTacToe 4x4x4! \n" + ENTER_PLAYERS
   val PLAYER_NAME: String = "Please enter players name again"
+  val WIN_ERROR: String = "No Player has won yet"
   val PLAYER_DEFINED_MESSAGE: String = "Players are defined!!!\n"
   val INFO_ABOUT_THE_GAME: String = " you can start. The grids with the number in them are\n" +
     " an example of what you should enter if you want place a your marker in this cell.\n" +
