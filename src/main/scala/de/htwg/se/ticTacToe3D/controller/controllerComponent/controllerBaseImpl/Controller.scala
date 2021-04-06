@@ -9,6 +9,8 @@ import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
 import de.htwg.se.ticTacToe3D.model.{FactoryProducer, WinStateStrategyTemplate}
 import de.htwg.se.ticTacToe3D.util.UndoManager
 
+import scala.util.{Failure, Success, Try}
+
 class Controller (var game: GameInterface,
                   var oneGridStrategy: Array[WinStateStrategyTemplate],
                   var allGridStrategy : Array[WinStateStrategyTemplate])
@@ -32,21 +34,28 @@ class Controller (var game: GameInterface,
     true
   }
 
-  def checkData(row: Int, column: Int, grid: Int): Boolean = {
+  def checkData(row: Int, column: Int, grid: Int): Try[Boolean] = {
     if(row > 3 || column > 3 || grid > 3){
       statusMessage =  Messages.ERROR_MOVE
       notifyObservers
-      return false
+      return Failure(new Exception(Messages.ERROR_MOVE))
     }
-    true
+    Success(true)
   }
   def checkForWin(i: Int, row: Int, column: Int, grid: Int): Boolean = {
-    won(i) = oneGridStrategy(i).checkForWin(row, column, grid) || allGridStrategy(i).checkForWin(row, column, grid)
-    if(won(i)) {
-      this.statusMessage = game.players(i).name + Messages.WIN_MESSAGE
-      notifyObservers
-    }
-    true
+    val checkWinOneGrid: Try[Boolean] = oneGridStrategy(i).checkForWin(row ,column ,grid).map(won => won)
+    val checkWinFourGrid: Try[Boolean] = allGridStrategy(i).checkForWin(row ,column ,grid).map(won => won)
+    matchCheckWin(checkWinOneGrid, i) || matchCheckWin(checkWinFourGrid, i)
+  }
+
+  def matchCheckWin(tryWin: Try[Boolean], i: Int): Boolean = tryWin match {
+      case Success(x) =>
+        this.statusMessage = game.players(i).name + Messages.WIN_MESSAGE
+        notifyObservers
+        true
+      case Failure(error) =>
+        Failure(new Exception(error.getMessage))
+        false
   }
 
   def save = {
@@ -68,16 +77,21 @@ class Controller (var game: GameInterface,
       notifyObservers
       return false
     }
-    if (checkData(row, column, grid)) {
-      if(myTurn){
-        tryToMove(0, row, column, grid)
-        checkForWin(0, row, column, grid)
-      }else{
-        tryToMove(1, row, column, grid)
-        checkForWin(1, row, column, grid)
-      }
-      myTurn = !myTurn
+    val checkCell: Try[Boolean] = checkData(row, column, grid).map(valid => valid)
+    checkCell match {
+      case Success(x) =>
+        if (myTurn) {
+          tryToMove(0, row, column, grid)
+          checkForWin(0, row, column, grid)
+        } else {
+          tryToMove(1, row, column, grid)
+          checkForWin(1, row, column, grid)
+        }
+      case Failure(error) =>
+        Failure(new Exception(error.getMessage))
+        return false
     }
+    myTurn = !myTurn
     true
   }
   override def toString: String = game.customToString
@@ -156,6 +170,7 @@ object Messages {
   val ENTER_PLAYERS: String = "Please enter two players with - between then (don't forget no spacing)"
   val WELCOME_MESSAGE: String = "Welcome to HTWG TicTacToe 4x4x4! \n" + ENTER_PLAYERS
   val PLAYER_NAME: String = "Please enter players name again"
+  val WIN_ERROR: String = "No Player has won yet"
   val PLAYER_DEFINED_MESSAGE: String = "Players are defined!!!\n"
   val INFO_ABOUT_THE_GAME: String = " you can start. The grids with the number in them are\n" +
     " an example of what you should enter if you want place a your marker in this cell.\n" +
