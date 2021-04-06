@@ -33,23 +33,28 @@ class Controller (var game: GameInterface,
   var won: Array[Boolean] = Array(false, false)
   var myTurn: Boolean = true
   var statusMessage: String = Messages.WELCOME_MESSAGE
-  def checkData(row: Int, column: Int, grid: Int): Boolean = {
+  def checkData(row: Int, column: Int, grid: Int): Try[Boolean] = {
     if(row > 3 || column > 3 || grid > 3){
       statusMessage =  Messages.ERROR_MOVE
       notifyObservers
-      return false
+      return Failure(new Exception(Messages.ERROR_MOVE))
     }
-    true
+    Success(true)
   }
-  def checkForWin(i: Int, row: Int, column: Int, grid: Int): Try[Boolean] = {
-    val testWon = (i:Int) => Try(oneGridStrategy(i).checkForWin(row,column,grid))
-    val testWon2 = (i: Int) => Try(allGridStrategy(i).checkForWin(row, column, grid))
-    if(testWon(i).isSuccess || testWon2(i).isSuccess) {
-      this.statusMessage = game.players(i).name + Messages.WIN_MESSAGE
-      notifyObservers
-      return Success(true)
-    }
-    Failure(new Exception(Messages.WIN_ERROR))
+  def checkForWin(i: Int, row: Int, column: Int, grid: Int): Boolean = {
+    val checkWinOneGrid: Try[Boolean] = oneGridStrategy(i).checkForWin(row ,column ,grid).map(won => won)
+    val checkWinFourGrid: Try[Boolean] = allGridStrategy(i).checkForWin(row ,column ,grid).map(won => won)
+    matchCheckWin(checkWinOneGrid, i) || matchCheckWin(checkWinFourGrid, i)
+  }
+
+  def matchCheckWin(tryWin: Try[Boolean], i: Int): Boolean = tryWin match {
+      case Success(x) =>
+        this.statusMessage = game.players(i).name + Messages.WIN_MESSAGE
+        notifyObservers
+        true
+      case Failure(error) =>
+        Failure(new Exception(error.getMessage))
+        false
   }
 
   def save = {
@@ -71,16 +76,21 @@ class Controller (var game: GameInterface,
       notifyObservers
       return false
     }
-    if (checkData(row, column, grid)) {
-      if(myTurn){
-        tryToMove(0, row, column, grid)
-        Try(checkForWin(0, row, column, grid))
-      }else{
-        tryToMove(1, row, column, grid)
-        Try(checkForWin(1, row, column, grid))
-      }
-      myTurn = !myTurn
+    val checkCell: Try[Boolean] = checkData(row, column, grid).map(valid => valid)
+    checkCell match {
+      case Success(x) =>
+        if (myTurn) {
+          tryToMove(0, row, column, grid)
+          checkForWin(0, row, column, grid)
+        } else {
+          tryToMove(1, row, column, grid)
+          checkForWin(1, row, column, grid)
+        }
+      case Failure(error) =>
+        Failure(new Exception(error.getMessage))
+        return false
     }
+    myTurn = !myTurn
     true
   }
   override def toString: String = game.customToString

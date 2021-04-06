@@ -11,8 +11,8 @@ trait ControllerInterface extends Observable{
   def oneGridStrategy: Array[WinStateStrategyTemplate]
   def allGridStrategy : Array[WinStateStrategyTemplate]
   def exit: Boolean
-  def checkData(row: Int, column: Int, grid: Int): Boolean
-  def checkForWin(i: Int, row: Int, column: Int, grid: Int): Try[Boolean]
+  def checkData(row: Int, column: Int, grid: Int): Try[Boolean]
+  def checkForWin(i: Int, row: Int, column: Int, grid: Int): Boolean
   def setValue(row: Int, column: Int, grid: Int): Boolean
   def toString: String
   def getNextPlayer(index: Int): String
