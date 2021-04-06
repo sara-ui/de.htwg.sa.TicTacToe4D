@@ -30,12 +30,6 @@ case class Game(grids: Vector[Grid], players: Vector[Player]) extends GameInterf
     grids(grid).cellIsSet(row, column)
 
   def customToString: String = {
-    var res = ""
-    for {
-      i <- grids.indices
-    } {
-      res += grids(i).customToString(i)
-    }
-    res
+    grids.indices.foldLeft("")((acc, i) => acc + grids(i).customToString(i))
   }
 }

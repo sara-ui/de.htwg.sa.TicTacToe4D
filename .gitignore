@@ -3,3 +3,4 @@
 /.idea
 /project/build.properties
 /project/build.sbt
+/game.xml

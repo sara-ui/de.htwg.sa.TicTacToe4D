@@ -16,46 +16,25 @@ case class Grid(
   def set(row:Int, col:Int, value:String): Grid = copy(cells.updated(row, cells(row).updated(col, Cell(value))))
 
   private def spacing(size: Int): String = {
-    var res = " "
-    for (i <- 0 to size) res += " "
-    res
+    Range(0,size).foldLeft(" ")((str, _) => str + " ")
   }
 
   private def addCellToString(row: Int): String = {
-    var str = spacing(row) + " \\"
-    for {
-      col <- cells(row).indices
-    } str += "   " + cell(row, col).toString + "   \\"
-    str
+    cells(row).indices.foldLeft(spacing(row) + " \\")((acc, col) => acc + "   " + cell(row, col).toString + "   \\")
   }
 
   private def newLine(row: Int): String = {
     val lineSep = System.lineSeparator
-    var res = lineSep + spacing(row)+ "\\-------\\-------\\-------\\-------\\"
-    res += " \\-------\\-------\\-------\\-------\\" + lineSep
+    var res = Range(0,4).foldLeft(lineSep + spacing(row))((str, _) => str + "\\-------")
+    res += "\\ \\-------\\-------\\-------\\-------\\" + lineSep
     res
   }
 
   private def addExplanationCellToString(row: Int, grid: Int): String = {
-    var res = " \\"
-    for {
-      column <- cells(row).indices
-    } {
-      res += "  " + row + column + grid + "  \\"
-
-    }
-    res += newLine(row + 1)
-    res
+    cells(row).indices.foldLeft(" \\")((acc, col) => acc + "  " + row + col + grid + "  \\") + newLine(row + 1)
   }
 
   def customToString(grid: Int): String = {
-    var res = newLine(0)
-    for {
-      row <- cells.indices
-    } {
-      res += addCellToString(row) + addExplanationCellToString(row, grid)
-    }
-    res
+    cells.indices.foldLeft(newLine(0))((acc, row) => acc + addCellToString(row) + addExplanationCellToString(row, grid))
   }
-
 }
