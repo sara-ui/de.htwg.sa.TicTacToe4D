@@ -26,7 +26,7 @@ case class Grid(
   private def newLine(row: Int): String = {
     val lineSep = System.lineSeparator
     var res = Range(0,4).foldLeft(lineSep + spacing(row))((str, _) => str + "\\-------")
-    res += "\\ \\-------\\-------\\-------\\-------\\" + lineSep
+    res += Range(0,4).foldLeft("\\ \\")((str, _) => str + "-------\\") + lineSep
     res
   }
 
