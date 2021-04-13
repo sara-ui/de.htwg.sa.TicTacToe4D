@@ -1,4 +1,6 @@
-import java.util
+lazy val root = (project in file(".")).dependsOn(board, checkWin).aggregate(board, checkWin)
+lazy val board = project in file("Board")
+lazy val checkWin = project in file("checkWin")
 
 name := "TicTacToe-3D-4x4"
 
