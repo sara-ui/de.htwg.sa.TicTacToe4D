@@ -1,27 +1,27 @@
 <game>
-    <turn>true</turn>
+    <turn>false</turn>
     <players>
-        <player name="te" symbol="X"></player>
-        <player name="ee" symbol="O"></player>
+        <player name="awfesgrdhtfjz" symbol="X"></player>
+        <player name="dwafesgrdhtfjzgkuhlij" symbol="O"></player>
     </players>
     <grids>
         <grid>
-            <cell row="0" col="0" value="X"></cell>
+            <cell row="0" col="0" value=""></cell>
             <cell row="0" col="1" value=""></cell>
             <cell row="0" col="2" value=""></cell>
-            <cell row="0" col="3" value=""></cell>
-            <cell row="1" col="0" value=""></cell>
-            <cell row="1" col="1" value=""></cell>
+            <cell row="0" col="3" value="X"></cell>
+            <cell row="1" col="0" value="O"></cell>
+            <cell row="1" col="1" value="X"></cell>
             <cell row="1" col="2" value=""></cell>
             <cell row="1" col="3" value=""></cell>
             <cell row="2" col="0" value=""></cell>
-            <cell row="2" col="1" value=""></cell>
+            <cell row="2" col="1" value="O"></cell>
             <cell row="2" col="2" value=""></cell>
-            <cell row="2" col="3" value=""></cell>
-            <cell row="3" col="0" value=""></cell>
-            <cell row="3" col="1" value="O"></cell>
-            <cell row="3" col="2" value="O"></cell>
-            <cell row="3" col="3" value="X"></cell>
+            <cell row="2" col="3" value="O"></cell>
+            <cell row="3" col="0" value="X"></cell>
+            <cell row="3" col="1" value=""></cell>
+            <cell row="3" col="2" value="X"></cell>
+            <cell row="3" col="3" value=""></cell>
         </grid>
         <grid>
             <cell row="0" col="0" value=""></cell>
@@ -38,8 +38,8 @@
             <cell row="2" col="3" value=""></cell>
             <cell row="3" col="0" value=""></cell>
             <cell row="3" col="1" value="X"></cell>
-            <cell row="3" col="2" value="X"></cell>
-            <cell row="3" col="3" value="O"></cell>
+            <cell row="3" col="2" value="O"></cell>
+            <cell row="3" col="3" value=""></cell>
         </grid>
         <grid>
             <cell row="0" col="0" value=""></cell>
@@ -54,7 +54,7 @@
             <cell row="2" col="1" value=""></cell>
             <cell row="2" col="2" value=""></cell>
             <cell row="2" col="3" value=""></cell>
-            <cell row="3" col="0" value="O"></cell>
+            <cell row="3" col="0" value=""></cell>
             <cell row="3" col="1" value=""></cell>
             <cell row="3" col="2" value=""></cell>
             <cell row="3" col="3" value=""></cell>
@@ -72,7 +72,7 @@
             <cell row="2" col="1" value=""></cell>
             <cell row="2" col="2" value=""></cell>
             <cell row="2" col="3" value=""></cell>
-            <cell row="3" col="0" value="X"></cell>
+            <cell row="3" col="0" value=""></cell>
             <cell row="3" col="1" value=""></cell>
             <cell row="3" col="2" value=""></cell>
             <cell row="3" col="3" value=""></cell>

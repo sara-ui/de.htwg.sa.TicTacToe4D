@@ -2,18 +2,17 @@ package de.htwg.se.ticTacToe3D.model.fileIoComponent.fileIoJsonImpl
 
 import java.io._
 
-import com.google.inject.Guice
-import de.htwg.se.ticTacToe3D.TicTacToeModule
+import scala.xml.{Node, PrettyPrinter}
 import de.htwg.se.ticTacToe3D.model.fileIoComponent.FileIOInterface
 import de.htwg.se.ticTacToe3D.model.gameComponent.GameInterface
+import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
 import play.api.libs.json.{JsValue, Json}
 
 import scala.io.Source
 
 class FileIO  extends FileIOInterface{
   override def load: (GameInterface, Boolean) = {
-    val injector = Guice.createInjector(new TicTacToeModule)
-    var game: GameInterface = injector.getInstance(classOf[GameInterface])
+    var game: GameInterface = new Game()
     val source: String = Source.fromFile("." + File.separator + "game.json").getLines.mkString
     val json: JsValue = Json.parse(source)
     val turn = (json \ "turn").as[Boolean]

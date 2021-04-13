@@ -2,17 +2,14 @@ package de.htwg.se.ticTacToe3D.model.fileIoComponent.fileIoXmlImpl
 
 import java.io._
 
-import com.google.inject.Guice
-import de.htwg.se.ticTacToe3D.TicTacToeModule
-
 import scala.xml.{Node, PrettyPrinter}
 import de.htwg.se.ticTacToe3D.model.fileIoComponent.FileIOInterface
 import de.htwg.se.ticTacToe3D.model.gameComponent.GameInterface
+import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
 
 class FileIO extends FileIOInterface {
   override def load: (GameInterface, Boolean) = {
-    val injector = Guice.createInjector(new TicTacToeModule)
-    var game: GameInterface = injector.getInstance(classOf[GameInterface])
+    var game: GameInterface = new Game()
     val file = scala.xml.XML.loadFile("." + File.separator + "game.xml")
     val turn: Boolean = (file \\ "turn").text.toBoolean
     val players = (file \\ "player")

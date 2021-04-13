@@ -1,9 +1,6 @@
-lazy val board = project in file("Board")
-lazy val checkWin = project in file("checkWin")
-lazy val fileIO = (project in file("fileIO")).dependsOn(board)
-lazy val root = (project in file(".")).dependsOn(fileIO, checkWin).aggregate(board, checkWin)
+import java.util
 
-name := "TicTacToe-3D-4x4"
+name := "TicTacToe-3D-FileIO"
 
 version := "0.1"
 
