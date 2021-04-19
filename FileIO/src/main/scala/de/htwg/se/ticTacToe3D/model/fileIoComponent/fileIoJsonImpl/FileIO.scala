@@ -10,7 +10,13 @@ import play.api.libs.json.{JsValue, Json}
 
 import scala.io.Source
 
-class FileIO  extends FileIOInterface{
+case class FileIO() extends FileIOInterface {
+
+  def loadJson(): String = {
+    val file = scala.io.Source.fromFile("game.json")
+    try file.mkString finally file.close()
+  }
+
   override def load: (GameInterface, Boolean) = {
     var game: GameInterface = new Game()
     val source: String = Source.fromFile("." + File.separator + "game.json").getLines.mkString
@@ -84,6 +90,12 @@ class FileIO  extends FileIOInterface{
   override def save(game: GameInterface, turn: Boolean): Unit = {
     val pw = new PrintWriter(new File("." + File.separator + "game.json"))
     pw.write(Json.prettyPrint(gameToJson(game, turn)))
+    pw.close
+  }
+
+  def save(gameAsJson: String): Unit = {
+    val pw = new PrintWriter(new File("." + File.separator + "game.json"))
+    pw.write(gameAsJson)
     pw.close
   }
 }

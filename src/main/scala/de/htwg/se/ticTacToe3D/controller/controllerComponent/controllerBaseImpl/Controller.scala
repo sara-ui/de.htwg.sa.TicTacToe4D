@@ -1,5 +1,10 @@
 package de.htwg.se.ticTacToe3D.controller.controllerComponent.controllerBaseImpl
 
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.{HttpMethods, HttpRequest, HttpResponse}
+import akka.http.scaladsl.unmarshalling.Unmarshal
 import com.google.inject.{Guice, Inject}
 import de.htwg.se.ticTacToe3D.TicTacToeModule
 import de.htwg.se.ticTacToe3D.controller.controllerComponent.ControllerInterface
@@ -8,7 +13,9 @@ import de.htwg.se.ticTacToe3D.model.gameComponent.GameInterface
 import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
 import de.htwg.se.ticTacToe3D.model.{FactoryProducer, WinStateStrategyTemplate}
 import de.htwg.se.ticTacToe3D.util.UndoManager
+import play.api.libs.json.{JsValue, Json}
 
+import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 class Controller (var game: GameInterface,
@@ -58,17 +65,114 @@ class Controller (var game: GameInterface,
         false
   }
 
+  def gameToJson(game: GameInterface, turn: Boolean): JsValue = {
+    Json.obj(
+      "turn" -> turn,
+      "players" -> Json.toJson(
+        for {
+          index <- game.players.indices
+        } yield {
+          Json.obj(
+            "name" -> game.players(index).name,
+            "symbol" -> game.players(index).symbol
+          )
+        }
+      ),
+      "grids" -> Json.toJson(
+        for {
+          index <- game.grids.indices
+        } yield {
+          Json.obj(
+            "cells" -> Json.toJson(
+              for {
+                row <- 0 until game.grids(index).size;
+                col <- 0 until game.grids(index).size
+              } yield {
+                Json.obj(
+                  "row" -> row,
+                  "col" -> col,
+                  "value" -> game.grids(index).cell(row, col).value
+                )
+              }
+            )
+          )
+        }
+      )
+    )
+  }
+
   def save = {
-    fileIo.save(game, this.myTurn)
+    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+    implicit val executionContext = system.executionContext
+
+    val gameAsJson = Json.prettyPrint(gameToJson(game, this.myTurn))
+
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+      method = HttpMethods.POST,
+      uri = "http://localhost:8080/json",
+      entity = gameAsJson
+    ))
     statusMessage = Messages.GAME_SAVED
     notifyObservers
   }
 
   def load = {
-    val (loadedGame, turn) = fileIo.load
-    game = loadedGame
-    statusMessage = Messages.GAME_LOADED + "\n" +  getNextPlayer(if(turn) 0 else 1) + Messages.YOU_ARE_NEXT
-    notifyObservers
+    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+    implicit val executionContext = system.executionContext
+
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://localhost:8080/json"))
+
+    responseFuture
+      .onComplete {
+        case Failure(_) => sys.error("Failed getting Json")
+        case Success(value) => {
+          Unmarshal(value.entity).to[String].onComplete {
+            case Failure(_) => sys.error("Failed unmarshalling")
+            case Success(value) => {
+              val (loadedGame, turn) = unmarshall(value)
+              game = loadedGame
+              statusMessage = Messages.GAME_LOADED + "\n" +  getNextPlayer(if(turn) 0 else 1) + Messages.YOU_ARE_NEXT
+              notifyObservers
+            }
+          }
+        }
+    }
+  }
+
+  def unmarshall(gameAsJson: String): (GameInterface, Boolean) = {
+    var game: GameInterface = new Game()
+    val source: String = gameAsJson
+    val json: JsValue = Json.parse(source)
+    val turn = (json \ "turn").as[Boolean]
+    // players
+    val players = (json \ "players").get
+    val playerName1 = (players \\ "name").head.as[String]
+    val playerName2 = (players \\ "name")(1).as[String]
+    val playerSymbol1 = (players \\ "symbol").head.as[String]
+    val playerSymbol2 = (players \\ "symbol")(1).as[String]
+    game = game.setPlayers(playerName1, playerName2, playerSymbol1, playerSymbol2)
+    // Grids
+    val grids = (json \ "grids").get
+    for (i <- 0 until 4) {
+      val grid = (grids \\ "cells")(i)
+      for (index <- 0 until 16) {
+        val row = (grid \\ "row")(index).as[Int]
+        val col = (grid \\ "col")(index).as[Int]
+        val value = (grid \\ "value")(index).as[String]
+        if (!value.equals("")) {
+          game = game.set(
+            row,
+            col,
+            i,
+            if (value.equals(playerSymbol1)) 0 else 1
+          )
+        }
+      }
+    }
+    (game,
+      turn)
   }
 
   def setValue(row: Int, column: Int, grid: Int): Boolean = {
