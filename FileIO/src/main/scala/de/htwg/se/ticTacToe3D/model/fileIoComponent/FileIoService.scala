@@ -23,15 +23,14 @@ case object FileIoService {
     val route =
       concat (
         get {
-          path("json") {
+          path("game") {
             complete(HttpEntity(ContentTypes.`application/json`, FileIO().loadJson()))
           }
         },
         post {
-          path("json") {
+          path("game") {
             entity(as [String]) { game =>
               FileIO().save(game)
-              println("GAME SAVED")
               complete("game saved")
             }
           }

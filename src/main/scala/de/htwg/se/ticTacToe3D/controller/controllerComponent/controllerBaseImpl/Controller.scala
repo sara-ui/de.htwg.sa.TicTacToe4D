@@ -110,7 +110,7 @@ class Controller (var game: GameInterface,
 
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.POST,
-      uri = "http://localhost:8080/json",
+      uri = "http://localhost:8080/game",
       entity = gameAsJson
     ))
     statusMessage = Messages.GAME_SAVED
@@ -122,7 +122,7 @@ class Controller (var game: GameInterface,
 
     implicit val executionContext = system.executionContext
 
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://localhost:8080/json"))
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://localhost:8080/game"))
 
     responseFuture
       .onComplete {
