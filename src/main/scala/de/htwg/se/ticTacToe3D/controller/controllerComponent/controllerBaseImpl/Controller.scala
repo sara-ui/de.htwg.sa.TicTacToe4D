@@ -50,19 +50,32 @@ class Controller (var game: GameInterface,
     Success(true)
   }
   def checkForWin(i: Int, row: Int, column: Int, grid: Int): Boolean = {
-    val checkWinOneGrid: Try[Boolean] = oneGridStrategy(i).checkForWin(row ,column ,grid).map(won => won)
-    val checkWinFourGrid: Try[Boolean] = allGridStrategy(i).checkForWin(row ,column ,grid).map(won => won)
-    matchCheckWin(checkWinOneGrid, i) || matchCheckWin(checkWinFourGrid, i)
-  }
 
-  def matchCheckWin(tryWin: Try[Boolean], i: Int): Boolean = tryWin match {
-      case Success(x) =>
-        this.statusMessage = game.players(i).name + Messages.WIN_MESSAGE
-        notifyObservers
-        true
-      case Failure(error) =>
-        Failure(new Exception(error.getMessage))
-        false
+    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+    implicit val executionContext = system.executionContext
+
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+      method = HttpMethods.GET,
+      uri = s"http://localhost:8080/checkWin?i=$i&row=$row&column=$column&grid=$grid"
+    ))
+
+    responseFuture.onComplete {
+      case Failure(_) => sys.error("Error checking for Win")
+      case Success(value) => {
+        Unmarshal(value.entity).to[String].onComplete {
+          case Failure(_) => sys.error("Failed unmarshalling")
+          case Success(value) => {
+            if (value == "true") {
+              this.statusMessage = game.players(i).name + Messages.WIN_MESSAGE
+              notifyObservers
+              true
+            }
+          }
+        }
+      }
+    }
+    true
   }
 
   def gameToJson(game: GameInterface, turn: Boolean): JsValue = {
@@ -232,12 +245,19 @@ class Controller (var game: GameInterface,
   }
 
   def restart: Boolean = {
+    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+    implicit val executionContext = system.executionContext
     if (game.players.contains(null) || "".equals(game.players(0).name)) {
       this.statusMessage = Messages.ERROR_GIVE_PLAYERS_RESET
     } else {
       game = new Game(game.players(0).name, game.players(1).name, "X", "O")
       myTurn = true
       won = Array(false, false)
+      val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+        method = HttpMethods.POST,
+        uri = "http://localhost:8080/checkWin"
+      ))
       oneGridStrategy = Array.fill(2)(FactoryProducer("oneD"))
       allGridStrategy = Array.fill(2)(FactoryProducer("fourD"))
       this.statusMessage = Messages.GAME_RESET_MESSAGE + game.players(0).name + Messages.INFO_ABOUT_THE_GAME
