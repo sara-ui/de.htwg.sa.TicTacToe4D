@@ -30,6 +30,7 @@ class SetCommand(row:Int, col: Int, grid:Int, playerIndex:Int, controller: Contr
             case Success(value) => {
               val (loadedGame, turn) = controller.unmarshall(value)
               controller.game = loadedGame
+              controller.notifyObservers
             }
           }
         }

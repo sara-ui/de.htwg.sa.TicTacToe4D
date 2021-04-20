@@ -1,4 +1,4 @@
-package de.htwg.se.ticTacToe3D.aview
+package de.htwg.se.ticTacToe3D.view
 
 import de.htwg.se.ticTacToe3D.controller.controllerComponent.ControllerInterface
 import de.htwg.se.ticTacToe3D.util.Observer

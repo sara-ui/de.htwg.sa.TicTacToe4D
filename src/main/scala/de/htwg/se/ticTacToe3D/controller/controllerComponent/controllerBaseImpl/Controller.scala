@@ -241,7 +241,6 @@ class Controller (var game: GameInterface,
             } else {
               undoManager.doStep(new SetCommand(row, column, grid, playerIndex, this))
               this.statusMessage = Messages.playerMoveToString(game.players(playerIndex).name, row, column, grid) + getNextPlayer(playerIndex) + Messages.NEXT
-              notifyObservers
             }
           }
         }
