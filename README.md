@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/sara-ui/TicTacToe-3D-4x4x4x4.svg?branch=master)](https://travis-ci.org/sara-ui/TicTacToe-3D-4x4x4x4)
-[![Coverage Status](https://coveralls.io/repos/github/sara-ui/TicTacToe-3D-4x4x4x4/badge.svg?branch=master)](https://coveralls.io/github/sara-ui/TicTacToe-3D-4x4x4x4?branch=master)
+[![Build Status](https://travis-ci.org/sara-ui/de.htwg.sa.TicTacToe4D.svg?branch=SA-05-REST)](https://travis-ci.org/sara-ui/de.htwg.sa.TicTacToe4D)
+
 # TicTacToe-3D-4-4-4
 =========================
 
