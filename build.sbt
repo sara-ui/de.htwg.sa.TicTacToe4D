@@ -29,6 +29,7 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion
 
+coverageEnabled in Test := true
 
 
 

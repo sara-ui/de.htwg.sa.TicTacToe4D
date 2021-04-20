@@ -1,10 +1,10 @@
 {
   "turn" : false,
   "players" : [ {
-    "name" : "player1",
+    "name" : "asd",
     "symbol" : "X"
   }, {
-    "name" : "player2",
+    "name" : "asd",
     "symbol" : "O"
   } ],
   "grids" : [ {
@@ -59,7 +59,7 @@
     }, {
       "row" : 3,
       "col" : 0,
-      "value" : ""
+      "value" : "X"
     }, {
       "row" : 3,
       "col" : 1,
@@ -67,7 +67,7 @@
     }, {
       "row" : 3,
       "col" : 2,
-      "value" : ""
+      "value" : "O"
     }, {
       "row" : 3,
       "col" : 3,
@@ -129,7 +129,7 @@
     }, {
       "row" : 3,
       "col" : 1,
-      "value" : ""
+      "value" : "X"
     }, {
       "row" : 3,
       "col" : 2,

@@ -8,34 +8,24 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import com.google.inject.{Guice, Inject}
 import de.htwg.se.ticTacToe3D.TicTacToeModule
 import de.htwg.se.ticTacToe3D.controller.controllerComponent.ControllerInterface
-import de.htwg.se.ticTacToe3D.model.fileIoComponent.FileIOInterface
 import de.htwg.se.ticTacToe3D.model.gameComponent.GameInterface
 import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
-import de.htwg.se.ticTacToe3D.model.{FactoryProducer, WinStateStrategyTemplate}
 import de.htwg.se.ticTacToe3D.util.UndoManager
 import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-class Controller (var game: GameInterface,
-                  var oneGridStrategy: Array[WinStateStrategyTemplate],
-                  var allGridStrategy : Array[WinStateStrategyTemplate])
+
+class Controller @Inject() (var game: GameInterface)
   extends ControllerInterface {
 
   private val undoManager = new UndoManager
   val injector = Guice.createInjector(new TicTacToeModule)
-  val fileIo = injector.getInstance(classOf[FileIOInterface])
   var won: Array[Boolean] = Array(false, false)
   var myTurn: Boolean = true
   var statusMessage: String = Messages.WELCOME_MESSAGE
 
-  @Inject()
-  def this (game: GameInterface) {
-    this(game,
-      Array.fill(2)(FactoryProducer("oneD")),
-      Array.fill(2)(FactoryProducer("fourD")))
-  }
   def exit: Boolean = {
     System.exit(0)
     true
@@ -289,8 +279,6 @@ class Controller (var game: GameInterface,
                 val (loadedGame, turn) = unmarshall(value)
                 game = loadedGame
                 notifyObservers
-                oneGridStrategy = Array.fill(2)(FactoryProducer("oneD"))
-                allGridStrategy = Array.fill(2)(FactoryProducer("fourD"))
                 this.statusMessage = Messages.GAME_RESET_MESSAGE + game.players(0).name + Messages.INFO_ABOUT_THE_GAME
               }
             }
@@ -303,8 +291,6 @@ class Controller (var game: GameInterface,
     game = new Game()
     myTurn = true
     won = Array(false, false)
-    oneGridStrategy = Array.fill(2)(FactoryProducer("oneD"))
-    allGridStrategy = Array.fill(2)(FactoryProducer("fourD"))
     this.statusMessage = Messages.WELCOME_MESSAGE
     notifyObservers
     true

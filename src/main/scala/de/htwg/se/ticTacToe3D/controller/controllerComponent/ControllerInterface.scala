@@ -1,6 +1,5 @@
 package de.htwg.se.ticTacToe3D.controller.controllerComponent
 
-import de.htwg.se.ticTacToe3D.model.WinStateStrategyTemplate
 import de.htwg.se.ticTacToe3D.model.gameComponent.GameInterface
 import de.htwg.se.ticTacToe3D.util.Observable
 
@@ -8,8 +7,6 @@ import scala.util.Try
 
 trait ControllerInterface extends Observable{
   def game: GameInterface
-  def oneGridStrategy: Array[WinStateStrategyTemplate]
-  def allGridStrategy : Array[WinStateStrategyTemplate]
   def exit: Boolean
   def checkData(row: Int, column: Int, grid: Int): Try[Boolean]
   def checkForWin(i: Int, row: Int, column: Int, grid: Int): Boolean
