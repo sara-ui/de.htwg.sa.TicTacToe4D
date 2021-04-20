@@ -1,10 +1,10 @@
 {
-  "turn" : true,
+  "turn" : false,
   "players" : [ {
-    "name" : "asd",
+    "name" : "player1",
     "symbol" : "X"
   }, {
-    "name" : "a",
+    "name" : "player2",
     "symbol" : "O"
   } ],
   "grids" : [ {
@@ -67,7 +67,73 @@
     }, {
       "row" : 3,
       "col" : 2,
-      "value" : "O"
+      "value" : ""
+    }, {
+      "row" : 3,
+      "col" : 3,
+      "value" : ""
+    } ]
+  }, {
+    "cells" : [ {
+      "row" : 0,
+      "col" : 0,
+      "value" : ""
+    }, {
+      "row" : 0,
+      "col" : 1,
+      "value" : ""
+    }, {
+      "row" : 0,
+      "col" : 2,
+      "value" : ""
+    }, {
+      "row" : 0,
+      "col" : 3,
+      "value" : ""
+    }, {
+      "row" : 1,
+      "col" : 0,
+      "value" : ""
+    }, {
+      "row" : 1,
+      "col" : 1,
+      "value" : ""
+    }, {
+      "row" : 1,
+      "col" : 2,
+      "value" : ""
+    }, {
+      "row" : 1,
+      "col" : 3,
+      "value" : ""
+    }, {
+      "row" : 2,
+      "col" : 0,
+      "value" : ""
+    }, {
+      "row" : 2,
+      "col" : 1,
+      "value" : ""
+    }, {
+      "row" : 2,
+      "col" : 2,
+      "value" : ""
+    }, {
+      "row" : 2,
+      "col" : 3,
+      "value" : ""
+    }, {
+      "row" : 3,
+      "col" : 0,
+      "value" : ""
+    }, {
+      "row" : 3,
+      "col" : 1,
+      "value" : ""
+    }, {
+      "row" : 3,
+      "col" : 2,
+      "value" : ""
     }, {
       "row" : 3,
       "col" : 3,
@@ -129,77 +195,11 @@
     }, {
       "row" : 3,
       "col" : 1,
-      "value" : "X"
-    }, {
-      "row" : 3,
-      "col" : 2,
-      "value" : ""
-    }, {
-      "row" : 3,
-      "col" : 3,
-      "value" : ""
-    } ]
-  }, {
-    "cells" : [ {
-      "row" : 0,
-      "col" : 0,
-      "value" : ""
-    }, {
-      "row" : 0,
-      "col" : 1,
-      "value" : ""
-    }, {
-      "row" : 0,
-      "col" : 2,
-      "value" : ""
-    }, {
-      "row" : 0,
-      "col" : 3,
-      "value" : ""
-    }, {
-      "row" : 1,
-      "col" : 0,
-      "value" : ""
-    }, {
-      "row" : 1,
-      "col" : 1,
-      "value" : ""
-    }, {
-      "row" : 1,
-      "col" : 2,
-      "value" : ""
-    }, {
-      "row" : 1,
-      "col" : 3,
-      "value" : ""
-    }, {
-      "row" : 2,
-      "col" : 0,
-      "value" : ""
-    }, {
-      "row" : 2,
-      "col" : 1,
-      "value" : ""
-    }, {
-      "row" : 2,
-      "col" : 2,
-      "value" : ""
-    }, {
-      "row" : 2,
-      "col" : 3,
-      "value" : ""
-    }, {
-      "row" : 3,
-      "col" : 0,
-      "value" : "X"
-    }, {
-      "row" : 3,
-      "col" : 1,
       "value" : ""
     }, {
       "row" : 3,
       "col" : 2,
-      "value" : "O"
+      "value" : ""
     }, {
       "row" : 3,
       "col" : 3,
