@@ -220,12 +220,31 @@ class Controller (var game: GameInterface,
     }
   }
   private def tryToMove(playerIndex: Int, row: Int, column: Int, grid: Int): Boolean = {
-    if (game.cellIsSet(row, column, grid)) {
-      this.myTurn = !this.myTurn
-      this.statusMessage = Messages.CELL_IS_SET
-    } else {
-      undoManager.doStep(new SetCommand(row, column, grid, playerIndex, this))
-      this.statusMessage = Messages.playerMoveToString(game.players(playerIndex).name, row, column, grid) + getNextPlayer(playerIndex) + Messages.NEXT
+    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+    implicit val executionContext = system.executionContext
+
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+      method = HttpMethods.GET,
+      uri = s"http://localhost:8080/cellIsSet?row=$row&col=$column&grid=$grid"
+    ))
+
+    responseFuture.onComplete {
+      case Failure(_) => sys.error("Error checking for Cell")
+      case Success(value) => {
+        Unmarshal(value.entity).to[String].onComplete {
+          case Failure(_) => sys.error("Failed unmarshalling")
+          case Success(value) => {
+            if (value == "true") {
+              this.myTurn = !this.myTurn
+              this.statusMessage = Messages.CELL_IS_SET
+            } else {
+              undoManager.doStep(new SetCommand(row, column, grid, playerIndex, this))
+              this.statusMessage = Messages.playerMoveToString(game.players(playerIndex).name, row, column, grid) + getNextPlayer(playerIndex) + Messages.NEXT
+            }
+          }
+        }
+      }
     }
     notifyObservers
     true
@@ -251,13 +270,29 @@ class Controller (var game: GameInterface,
     if (game.players.contains(null) || "".equals(game.players(0).name)) {
       this.statusMessage = Messages.ERROR_GIVE_PLAYERS_RESET
     } else {
-      game = new Game(game.players(0).name, game.players(1).name, "X", "O")
       myTurn = true
       won = Array(false, false)
       val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
         method = HttpMethods.POST,
         uri = "http://localhost:8080/checkWin"
       ))
+      val responseFutureBoard: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+        method = HttpMethods.POST,
+        uri = "http://localhost:8080/board"
+      ))
+      responseFutureBoard
+        .onComplete {
+          case Failure(_) => sys.error("Failed restarting")
+          case Success(value) => {
+            Unmarshal(value.entity).to[String].onComplete {
+              case Failure(_) => sys.error("Failed unmarshalling")
+              case Success(value) => {
+                val (loadedGame, turn) = unmarshall(value)
+                game = loadedGame
+              }
+            }
+          }
+        }
       oneGridStrategy = Array.fill(2)(FactoryProducer("oneD"))
       allGridStrategy = Array.fill(2)(FactoryProducer("fourD"))
       this.statusMessage = Messages.GAME_RESET_MESSAGE + game.players(0).name + Messages.INFO_ABOUT_THE_GAME
@@ -280,7 +315,28 @@ class Controller (var game: GameInterface,
       this.statusMessage = Messages.PLAYER_NAME
       notifyObservers
     } else {
-      game = new Game(player1, player2, "X", "O")
+      implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+      implicit val executionContext = system.executionContext
+
+      val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+        method = HttpMethods.POST,
+        uri = s"http://localhost:8080/board/setPlayers?player1=$player1&player2=$player2&myTurn=$myTurn"
+      ))
+
+      responseFuture
+        .onComplete {
+          case Failure(_) => sys.error("Failed setting Players")
+          case Success(value) => {
+            Unmarshal(value.entity).to[String].onComplete {
+              case Failure(_) => sys.error("Failed unmarshalling")
+              case Success(value) => {
+                val (loadedGame, turn) = unmarshall(value)
+                game = loadedGame
+              }
+            }
+          }
+        }
     }
     statusMessage = Messages.PLAYER_DEFINED_MESSAGE + player1 + Messages.INFO_ABOUT_THE_GAME
     notifyObservers

@@ -1,6 +1,7 @@
 package de.htwg.se.ticTacToe3D.model.gameComponent
 
 import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.{Cell, Game, Grid, Player}
+import play.api.libs.json.JsValue
 
 trait GameInterface {
   def grids: Vector[Grid]
@@ -11,6 +12,9 @@ trait GameInterface {
   def resetCell (row:Int, col:Int, grid: Int): Game
   def cellIsSet (row: Int, column: Int, grid: Int): Boolean
   def customToString: String
+  def board(game: GameInterface, turn: Boolean): Unit
+  def boardToJson(game: GameInterface, turn: Boolean): JsValue
+  def loadBoardJson(): String
 }
 trait GridInterface {
   def cells: Vector[Vector[Cell]]

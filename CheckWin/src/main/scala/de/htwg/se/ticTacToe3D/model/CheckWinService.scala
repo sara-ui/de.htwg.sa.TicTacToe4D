@@ -23,22 +23,22 @@ case object CheckWinService {
     val route =
       concat (
         get {
-        path("checkWin") {
-          parameters("i".as[Int], "row".as[Int], "column".as[Int], "grid".as[Int])
-          { (i, row, column, grid) =>
-            val checkWinOneGrid: Try[Boolean] = oneGridStrategy(i).checkForWin(row ,column ,grid).map(won => won)
-            val checkWinFourGrid: Try[Boolean] = allGridStrategy(i).checkForWin(row ,column ,grid).map(won => won)
-            val checkWin: Boolean = matchCheckWin(checkWinOneGrid) || matchCheckWin(checkWinFourGrid)
+          path("checkWin") {
+            parameters("i".as[Int], "row".as[Int], "column".as[Int], "grid".as[Int])
+            { (i, row, column, grid) =>
+              val checkWinOneGrid: Try[Boolean] = oneGridStrategy(i).checkForWin(row ,column ,grid).map(won => won)
+              val checkWinFourGrid: Try[Boolean] = allGridStrategy(i).checkForWin(row ,column ,grid).map(won => won)
+              val checkWin: Boolean = matchCheckWin(checkWinOneGrid) || matchCheckWin(checkWinFourGrid)
 
-            complete(HttpEntity(s"$checkWin"))
+              complete(HttpEntity(s"$checkWin"))
+            }
           }
-        }
-      },
+        },
         post {
           path("checkWin") {
             oneGridStrategy = Array.fill(2)(FactoryProducer("oneD"))
             allGridStrategy = Array.fill(2)(FactoryProducer("fourD"))
-            complete("Game was reset")
+            complete("Game has been reset")
           }
         }
       )

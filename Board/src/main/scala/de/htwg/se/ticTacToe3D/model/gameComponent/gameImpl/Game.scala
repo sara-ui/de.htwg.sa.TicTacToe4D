@@ -1,6 +1,9 @@
 package de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl
 
+import java.io.{File, PrintWriter}
+
 import de.htwg.se.ticTacToe3D.model.gameComponent.GameInterface
+import play.api.libs.json.{JsValue, Json}
 
 case class Game(grids: Vector[Grid], players: Vector[Player]) extends GameInterface {
   def this(player1: Player, player2: Player) = {
@@ -35,4 +38,51 @@ case class Game(grids: Vector[Grid], players: Vector[Player]) extends GameInterf
     }
     res
   }
+
+  def board(game: GameInterface, turn: Boolean): Unit = {
+    val pw = new PrintWriter(new File("." + File.separator + "board.json"))
+    pw.write(Json.prettyPrint(boardToJson(game, turn)))
+    pw.close
+  }
+  def boardToJson(game: GameInterface, turn: Boolean): JsValue = {
+    Json.obj(
+      "turn" -> turn,
+      "players" -> Json.toJson(
+        for {
+          index <- game.players.indices
+        } yield {
+          Json.obj(
+            "name" -> game.players(index).name,
+            "symbol" -> game.players(index).symbol
+          )
+        }
+      ),
+      "grids" -> Json.toJson(
+        for {
+          index <- game.grids.indices
+        } yield {
+          Json.obj(
+            "cells" -> Json.toJson(
+              for {
+                row <- 0 until game.grids(index).size;
+                col <- 0 until game.grids(index).size
+              } yield {
+                Json.obj(
+                  "row" -> row,
+                  "col" -> col,
+                  "value" -> game.grids(index).cell(row, col).value
+                )
+              }
+            )
+          )
+        }
+      )
+    )
+  }
+
+  def loadBoardJson(): String = {
+    val file = scala.io.Source.fromFile("board.json")
+    try file.mkString finally file.close()
+  }
+
 }

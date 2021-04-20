@@ -1,10 +1,10 @@
 {
-  "turn" : false,
+  "turn" : true,
   "players" : [ {
-    "name" : "Tesatawda",
+    "name" : "dwaefsgrdhtf",
     "symbol" : "X"
   }, {
-    "name" : "awdfgsfadwfa",
+    "name" : "wadefsgrdhtfjzg",
     "symbol" : "O"
   } ],
   "grids" : [ {
@@ -15,11 +15,11 @@
     }, {
       "row" : 0,
       "col" : 1,
-      "value" : "X"
+      "value" : ""
     }, {
       "row" : 0,
       "col" : 2,
-      "value" : "O"
+      "value" : ""
     }, {
       "row" : 0,
       "col" : 3,
@@ -27,7 +27,7 @@
     }, {
       "row" : 1,
       "col" : 0,
-      "value" : "X"
+      "value" : ""
     }, {
       "row" : 1,
       "col" : 1,
@@ -39,7 +39,7 @@
     }, {
       "row" : 1,
       "col" : 3,
-      "value" : "O"
+      "value" : ""
     }, {
       "row" : 2,
       "col" : 0,
@@ -121,7 +121,7 @@
     }, {
       "row" : 2,
       "col" : 3,
-      "value" : "X"
+      "value" : ""
     }, {
       "row" : 3,
       "col" : 0,
