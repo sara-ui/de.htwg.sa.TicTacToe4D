@@ -241,12 +241,12 @@ class Controller (var game: GameInterface,
             } else {
               undoManager.doStep(new SetCommand(row, column, grid, playerIndex, this))
               this.statusMessage = Messages.playerMoveToString(game.players(playerIndex).name, row, column, grid) + getNextPlayer(playerIndex) + Messages.NEXT
+              notifyObservers
             }
           }
         }
       }
     }
-    notifyObservers
     true
   }
   def undo: Unit = {
@@ -289,15 +289,15 @@ class Controller (var game: GameInterface,
               case Success(value) => {
                 val (loadedGame, turn) = unmarshall(value)
                 game = loadedGame
+                notifyObservers
+                oneGridStrategy = Array.fill(2)(FactoryProducer("oneD"))
+                allGridStrategy = Array.fill(2)(FactoryProducer("fourD"))
+                this.statusMessage = Messages.GAME_RESET_MESSAGE + game.players(0).name + Messages.INFO_ABOUT_THE_GAME
               }
             }
           }
         }
-      oneGridStrategy = Array.fill(2)(FactoryProducer("oneD"))
-      allGridStrategy = Array.fill(2)(FactoryProducer("fourD"))
-      this.statusMessage = Messages.GAME_RESET_MESSAGE + game.players(0).name + Messages.INFO_ABOUT_THE_GAME
     }
-    notifyObservers
     true
   }
   def reset: Boolean = {
@@ -333,13 +333,13 @@ class Controller (var game: GameInterface,
               case Success(value) => {
                 val (loadedGame, turn) = unmarshall(value)
                 game = loadedGame
+                statusMessage = Messages.PLAYER_DEFINED_MESSAGE + player1 + Messages.INFO_ABOUT_THE_GAME
+                notifyObservers
               }
             }
           }
         }
     }
-    statusMessage = Messages.PLAYER_DEFINED_MESSAGE + player1 + Messages.INFO_ABOUT_THE_GAME
-    notifyObservers
     true
   }
 }

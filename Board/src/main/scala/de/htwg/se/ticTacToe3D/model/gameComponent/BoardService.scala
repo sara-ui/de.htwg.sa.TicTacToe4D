@@ -38,6 +38,7 @@ case object BoardService {
           path("board" / "setPlayers") {
             parameters("player1".as[String], "player2".as[String], "myTurn".as[Boolean]) {
               (player1, player2, myTurn) =>
+                game = new Game()
                 game = game.setPlayers(player1, player2, "X", "O")
                 game.board(game, myTurn)
                 complete(HttpEntity(ContentTypes.`application/json`, game.loadBoardJson()))

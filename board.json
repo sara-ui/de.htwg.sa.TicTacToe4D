@@ -1,10 +1,10 @@
 {
   "turn" : true,
   "players" : [ {
-    "name" : "dwaefsgrdhtf",
+    "name" : "retzrtu",
     "symbol" : "X"
   }, {
-    "name" : "wadefsgrdhtfjzg",
+    "name" : "fdsgdhfjgkhlj",
     "symbol" : "O"
   } ],
   "grids" : [ {
@@ -59,7 +59,7 @@
     }, {
       "row" : 3,
       "col" : 0,
-      "value" : "X"
+      "value" : ""
     }, {
       "row" : 3,
       "col" : 1,
