@@ -1,10 +1,10 @@
 {
-  "turn" : false,
+  "turn" : true,
   "players" : [ {
-    "name" : "asd",
+    "name" : "terqwdsa",
     "symbol" : "X"
   }, {
-    "name" : "asd",
+    "name" : "dasfsgdhfjgkhl",
     "symbol" : "O"
   } ],
   "grids" : [ {
@@ -59,7 +59,7 @@
     }, {
       "row" : 3,
       "col" : 0,
-      "value" : "X"
+      "value" : ""
     }, {
       "row" : 3,
       "col" : 1,
@@ -67,7 +67,7 @@
     }, {
       "row" : 3,
       "col" : 2,
-      "value" : "O"
+      "value" : ""
     }, {
       "row" : 3,
       "col" : 3,
@@ -129,7 +129,7 @@
     }, {
       "row" : 3,
       "col" : 1,
-      "value" : "X"
+      "value" : ""
     }, {
       "row" : 3,
       "col" : 2,

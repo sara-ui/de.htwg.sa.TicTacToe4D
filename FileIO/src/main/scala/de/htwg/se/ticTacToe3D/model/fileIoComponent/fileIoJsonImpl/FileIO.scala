@@ -2,15 +2,14 @@ package de.htwg.se.ticTacToe3D.model.fileIoComponent.fileIoJsonImpl
 
 import java.io._
 
-import scala.xml.{Node, PrettyPrinter}
-import de.htwg.se.ticTacToe3D.model.fileIoComponent.FileIOInterface
+import de.htwg.se.ticTacToe3D.model.fileIoComponent.FileIoInterface
 import de.htwg.se.ticTacToe3D.model.gameComponent.GameInterface
 import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
 import play.api.libs.json.{JsValue, Json}
 
 import scala.io.Source
 
-case class FileIO() extends FileIOInterface {
+case class FileIO() extends FileIoInterface {
 
   def loadJson(): String = {
     val file = scala.io.Source.fromFile("game.json")

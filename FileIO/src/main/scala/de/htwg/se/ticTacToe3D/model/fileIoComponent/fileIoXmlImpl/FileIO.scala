@@ -3,11 +3,11 @@ package de.htwg.se.ticTacToe3D.model.fileIoComponent.fileIoXmlImpl
 import java.io._
 
 import scala.xml.{Node, PrettyPrinter}
-import de.htwg.se.ticTacToe3D.model.fileIoComponent.FileIOInterface
+import de.htwg.se.ticTacToe3D.model.fileIoComponent.FileIoInterface
 import de.htwg.se.ticTacToe3D.model.gameComponent.GameInterface
 import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
 
-class FileIO extends FileIOInterface {
+class FileIO extends FileIoInterface {
   override def load: (GameInterface, Boolean) = {
     var game: GameInterface = new Game()
     val file = scala.xml.XML.loadFile("." + File.separator + "game.xml")

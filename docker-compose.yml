@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  board-service:
+    build:
+      context: ./Board
+    expose:
+      - "9090"
+    container_name: board_api
+    image: board-service:1.0
+
+  checkwin-service:
+    build:
+      context: ./CheckWin
+    expose:
+      - "9090"
+    container_name: checkwin_api
+    image: checkwin-service:1.0
+
+  game-service:
+    build:
+      context: ./FileIO
+    expose:
+      - "9090"
+    image: game-service:1.0
+    container_name: game_api
+    depends_on:
+      - board-service
+
+  root:
+    build:
+      context: .
+    ports:
+      - "9090:9090"
+    image: tictactoe3d:1.0
+    container_name: tictactoe3d
+    depends_on:
+      - game-service
+      - checkwin-service
+

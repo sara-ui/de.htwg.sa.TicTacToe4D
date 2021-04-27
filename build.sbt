@@ -1,4 +1,4 @@
-lazy val checkWin = project in file("checkWin")
+lazy val checkWin = project in file("CheckWin")
 lazy val board = project in file("Board")
 lazy val fileIO = (project in file("fileIO")).dependsOn(board).aggregate(board)
 lazy val root = (project in file(".")).dependsOn(fileIO, checkWin).aggregate(fileIO, checkWin)
