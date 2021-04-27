@@ -11,6 +11,7 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 class SetCommand(row:Int, col: Int, grid:Int, playerIndex:Int, controller: Controller) extends Command {
+  val boardServiceUrl: String = "http://board-service:9090/"
   override def doStep: Unit = {
     implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
 
@@ -18,7 +19,7 @@ class SetCommand(row:Int, col: Int, grid:Int, playerIndex:Int, controller: Contr
 
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.POST,
-      uri = s"http://localhost:8080/board/setCell?row=$row&col=$col&grid=$grid&playerIndex=$playerIndex&myTurn=${controller.myTurn}"
+      uri = boardServiceUrl + s"board/setCell?row=$row&col=$col&grid=$grid&playerIndex=$playerIndex&myTurn=${controller.myTurn}"
     ))
 
     responseFuture
@@ -44,7 +45,7 @@ class SetCommand(row:Int, col: Int, grid:Int, playerIndex:Int, controller: Contr
 
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.POST,
-      uri = s"http://localhost:8080/board/resetCell?row=$row&col=$col&grid=$grid&myTurn=${controller.myTurn}"
+      uri = boardServiceUrl + s"/board/resetCell?row=$row&col=$col&grid=$grid&myTurn=${controller.myTurn}"
     ))
 
     responseFuture

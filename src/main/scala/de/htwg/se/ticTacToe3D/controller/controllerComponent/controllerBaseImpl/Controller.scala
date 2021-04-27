@@ -26,6 +26,10 @@ class Controller @Inject() (var game: GameInterface)
   var myTurn: Boolean = true
   var statusMessage: String = Messages.WELCOME_MESSAGE
 
+  val checkWinServiceUrl: String = "http://checkwin-service:9090/"
+  val gameServiceUrl: String = "http://game-service:9090/"
+  val boardServiceUrl: String = "http://board-service:9090/"
+
   def exit: Boolean = {
     System.exit(0)
     true
@@ -47,7 +51,7 @@ class Controller @Inject() (var game: GameInterface)
 
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
-      uri = s"http://localhost:8080/checkWin?i=$i&row=$row&column=$column&grid=$grid"
+      uri =  checkWinServiceUrl + s"checkWin?i=$i&row=$row&column=$column&grid=$grid"
     ))
 
     responseFuture.onComplete {
@@ -113,7 +117,7 @@ class Controller @Inject() (var game: GameInterface)
 
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.POST,
-      uri = "http://localhost:8080/game",
+      uri = gameServiceUrl + "game",
       entity = gameAsJson
     ))
     statusMessage = Messages.GAME_SAVED
@@ -125,7 +129,9 @@ class Controller @Inject() (var game: GameInterface)
 
     implicit val executionContext = system.executionContext
 
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://localhost:8080/game"))
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+      uri = gameServiceUrl + "game"
+    ))
 
     responseFuture
       .onComplete {
@@ -216,7 +222,7 @@ class Controller @Inject() (var game: GameInterface)
 
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
-      uri = s"http://localhost:8080/cellIsSet?row=$row&col=$column&grid=$grid"
+      uri = boardServiceUrl + s"cellIsSet?row=$row&col=$column&grid=$grid"
     ))
 
     responseFuture.onComplete {
@@ -263,11 +269,11 @@ class Controller @Inject() (var game: GameInterface)
       won = Array(false, false)
       val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
         method = HttpMethods.POST,
-        uri = "http://localhost:8080/checkWin"
+        uri = boardServiceUrl + "checkWin"
       ))
       val responseFutureBoard: Future[HttpResponse] = Http().singleRequest(HttpRequest(
         method = HttpMethods.POST,
-        uri = "http://localhost:8080/board"
+        uri = boardServiceUrl + "board"
       ))
       responseFutureBoard
         .onComplete {
@@ -306,7 +312,7 @@ class Controller @Inject() (var game: GameInterface)
 
       val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
         method = HttpMethods.POST,
-        uri = s"http://localhost:8080/board/setPlayers?player1=$player1&player2=$player2&myTurn=$myTurn"
+        uri = boardServiceUrl + s"board/setPlayers?player1=$player1&player2=$player2&myTurn=$myTurn"
       ))
 
       responseFuture
