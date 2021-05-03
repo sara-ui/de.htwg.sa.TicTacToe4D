@@ -20,7 +20,6 @@ case class TicTacToeService() {
     val injector: Injector = Guice.createInjector(new TicTacToeModule)
     val controller: ControllerInterface = injector.getInstance(classOf[ControllerInterface])
 
-
     val route =
       concat (
         (get & path("game" / "load")) {
@@ -58,7 +57,7 @@ case class TicTacToeService() {
         (get & path("game" / "restart")) {
             controller.restart
             complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, controller.toString))
-        },
+        }
       )
 
 

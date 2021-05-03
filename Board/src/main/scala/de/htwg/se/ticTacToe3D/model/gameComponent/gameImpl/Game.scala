@@ -2,7 +2,7 @@ package de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl
 
 import java.io.{File, PrintWriter}
 
-import de.htwg.se.ticTacToe3D.model.gameComponent.GameInterface
+import de.htwg.se.ticTacToe3D.model.gameComponent.{GameInterface, PlayerInterface}
 import play.api.libs.json.{JsValue, Json}
 
 case class Game(grids: Vector[Grid], players: Vector[Player]) extends GameInterface {
@@ -17,6 +17,8 @@ case class Game(grids: Vector[Grid], players: Vector[Player]) extends GameInterf
   def this() {
     this("", "", "", "")
   }
+
+  def getPlayer(index: Int) : PlayerInterface = this.players(index)
 
   def playersToString: String = players.map(p => p.toString).mkString("\n")
 

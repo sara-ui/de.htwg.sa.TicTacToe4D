@@ -15,6 +15,7 @@ trait GameInterface {
   def board(game: GameInterface, turn: Boolean): Unit
   def boardToJson(game: GameInterface, turn: Boolean): JsValue
   def loadBoardJson(): String
+  def getPlayer(index: Int) : PlayerInterface
 }
 trait GridInterface {
   def cells: Vector[Vector[Cell]]

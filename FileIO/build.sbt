@@ -1,4 +1,4 @@
-lazy val board = ProjectRef(uri("https://github.com/sara-ui/de.htwg.sa.TicTacToe4D.git#SA-06-Docker"), "board")
+lazy val board = ProjectRef(uri("https://github.com/sara-ui/de.htwg.sa.TicTacToe4D.git#SA-05-REST"), "board")
 lazy val fileIO = (project in file(".")).dependsOn(board).aggregate(board)
 
 name := "TicTacToe-3D-FileIO"

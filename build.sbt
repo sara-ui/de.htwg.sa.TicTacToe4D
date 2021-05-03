@@ -1,9 +1,9 @@
 lazy val checkWin = project in file("CheckWin")
 lazy val board = project in file("Board")
-lazy val fileIO = (project in file("fileIO"))//.dependsOn(board).aggregate(board)
+lazy val fileIO = project in file("fileIO")
 
-lazy val checkWinProject = ProjectRef(uri("https://github.com/sara-ui/de.htwg.sa.TicTacToe4D.git#SA-06-Docker"), "checkWin")
-lazy val fileIOProject = ProjectRef(uri("https://github.com/sara-ui/de.htwg.sa.TicTacToe4D.git#SA-06-Docker"), "fileIO")
+lazy val checkWinProject = ProjectRef(uri("https://github.com/sara-ui/de.htwg.sa.TicTacToe4D.git#SA-05-REST"), "checkWin")
+lazy val fileIOProject = ProjectRef(uri("https://github.com/sara-ui/de.htwg.sa.TicTacToe4D.git#SA-05-REST"), "fileIO")
 lazy val root = (project in file(".")).dependsOn(fileIOProject, checkWinProject).aggregate(fileIOProject, checkWinProject)
 
 name := "TicTacToe-3D-4x4"

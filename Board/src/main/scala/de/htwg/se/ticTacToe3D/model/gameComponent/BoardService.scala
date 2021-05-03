@@ -7,6 +7,8 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.StatusCodes.InternalServerError
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
+import com.google.inject.{Guice, Injector}
+import de.htwg.se.ticTacToe3D.model.dbComponent.DaoInterface
 import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
 
 case object BoardService {
@@ -16,6 +18,9 @@ case object BoardService {
     implicit val system = ActorSystem(Behaviors.empty, "my-system")
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.executionContext
+
+    val injector: Injector = Guice.createInjector(new BoardModule)
+    val db: DaoInterface = injector.getInstance(classOf[DaoInterface])
 
     var game: GameInterface = new Game()
     game.board(game, turn = true)
@@ -77,7 +82,27 @@ case object BoardService {
                 complete(HttpEntity(s"$cellIsSet"))
             }
           }
-        }
+        },
+        (get & path("game" / "database" / "save")) {
+          db.saveGame(game)
+          complete(StatusCodes.OK)
+        },
+        (get & path("game" / "database" / "players")) {
+          db.getPlayers()
+          complete(StatusCodes.OK)
+        },
+        (post & path("board" / "database" / "players")) {
+          parameters("player1".as[String], "player2".as[String]) {
+            (player1, player2) =>
+              game.setPlayers(player1, player2, "X", "O")
+              db.setPlayers(game.getPlayer(0), game.getPlayer(1))
+              complete(StatusCodes.OK)
+          }
+        },
+        (get & path("game" / "database" / "moves")) {
+          db.getLastMoves()
+          complete(StatusCodes.OK)
+        },
       )
 
 
