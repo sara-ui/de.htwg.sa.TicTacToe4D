@@ -46,6 +46,7 @@ case object BoardService {
                 game = new Game()
                 game = game.setPlayers(player1, player2, "X", "O")
                 game.board(game, myTurn)
+                db.setPlayers(game.getPlayer(0), game.getPlayer(1))
                 complete(HttpEntity(ContentTypes.`application/json`, game.loadBoardJson()))
             }
           }
@@ -87,17 +88,13 @@ case object BoardService {
           db.saveGame(game)
           complete(StatusCodes.OK)
         },
+        (get & path("game" / "database" / "load")) {
+          db.loadGame(game)
+          complete(StatusCodes.OK)
+        },
         (get & path("game" / "database" / "players")) {
           db.getPlayers()
           complete(StatusCodes.OK)
-        },
-        (post & path("board" / "database" / "players")) {
-          parameters("player1".as[String], "player2".as[String]) {
-            (player1, player2) =>
-              game.setPlayers(player1, player2, "X", "O")
-              db.setPlayers(game.getPlayer(0), game.getPlayer(1))
-              complete(StatusCodes.OK)
-          }
         },
         (get & path("game" / "database" / "moves")) {
           db.getLastMoves()

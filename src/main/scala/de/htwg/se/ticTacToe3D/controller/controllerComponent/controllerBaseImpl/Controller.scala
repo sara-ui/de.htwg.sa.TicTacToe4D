@@ -333,6 +333,50 @@ class Controller @Inject() (var game: GameInterface)
     }
     true
   }
+
+  def getLastMoves(): Unit = {
+    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+    implicit val executionContext = system.executionContext
+
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+      method = HttpMethods.GET,
+      uri = boardServiceUrl + "game/database/moves"
+    ))
+  }
+
+  def getPlayers(): Unit = {
+    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+    implicit val executionContext = system.executionContext
+
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+      method = HttpMethods.GET,
+      uri = boardServiceUrl + "game/database/players"
+    ))
+  }
+
+  def saveGameToDB(): Unit = {
+    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+    implicit val executionContext = system.executionContext
+
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+      method = HttpMethods.GET,
+      uri = boardServiceUrl + "game/database/save"
+    ))
+  }
+
+  def loadGameToDB(): Unit = {
+    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+    implicit val executionContext = system.executionContext
+
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
+      method = HttpMethods.GET,
+      uri = boardServiceUrl + "game/database/load"
+    ))
+  }
 }
 
 object Messages {

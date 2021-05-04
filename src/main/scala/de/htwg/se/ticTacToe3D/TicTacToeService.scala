@@ -57,8 +57,25 @@ case class TicTacToeService() {
         (get & path("game" / "restart")) {
             controller.restart
             complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, controller.toString))
-        }
+        },
+        (get & path("game" / "database" / "moves")) {
+          controller.getLastMoves()
+          complete(StatusCodes.OK)
+        },
+        (get & path("game" / "database" / "players")) {
+          controller.getPlayers()
+          complete(StatusCodes.OK)
+        },
+        (get & path("game" / "database" / "save")) {
+          controller.saveGameToDB()
+          complete(StatusCodes.OK)
+        },
+        (get & path("game" / "database" / "load")) {
+          controller.loadGameToDB()
+          complete(StatusCodes.OK)
+        },
       )
+
 
 
     Http().newServerAt("0.0.0.0", 9090).bind(route)

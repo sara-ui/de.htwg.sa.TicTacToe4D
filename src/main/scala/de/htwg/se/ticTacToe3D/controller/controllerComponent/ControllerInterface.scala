@@ -22,5 +22,8 @@ trait ControllerInterface extends Observable{
   def won: Array[Boolean]
   def setPlayers (player1: String, player2: String): Boolean
   def statusMessage: String
-
+  def getLastMoves(): Unit
+  def getPlayers(): Unit
+  def saveGameToDB(): Unit
+  def loadGameToDB(): Unit
 }

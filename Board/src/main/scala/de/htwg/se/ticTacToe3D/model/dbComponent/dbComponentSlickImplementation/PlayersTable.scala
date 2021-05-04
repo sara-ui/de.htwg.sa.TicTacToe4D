@@ -1,14 +1,14 @@
 package de.htwg.se.ticTacToe3D.model.dbComponent.dbComponentSlickImplementation
 
-import slick.jdbc.MySQLProfile.api._
+import slick.jdbc.PostgresProfile.api._
 
 class PlayersTable(tag: Tag) extends Table[(Int, String, String)] (tag, "PlayersTable") {
 
-  def id = column[Int]("Id", O.PrimaryKey, O.AutoInc)
+  def id = column[Int]("ID", O.PrimaryKey)
 
-  def name = column[String]("name")
-  def symbol = column[String]("symbol")
+  def name = column[String]("NAME")
+  def symbol = column[String]("SYMBOL")
 
-  def * = (id, name, symbol)
+  override def * = (id, name, symbol)
 
 }

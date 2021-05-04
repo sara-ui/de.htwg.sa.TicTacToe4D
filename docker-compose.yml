@@ -1,6 +1,15 @@
 version: "3.9"
 
 services:
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: "tictactoeTable"
+      POSTGRES_USER: "test"
+      POSTGRES_PASSWORD: "user"
+
   board-service:
     build:
       context: ./Board
@@ -34,6 +43,7 @@ services:
       - "9090:9090"
     image: tictactoe3d:1.0
     container_name: tictactoe3d
+    stdin_open: true
     depends_on:
       - game-service
       - checkwin-service

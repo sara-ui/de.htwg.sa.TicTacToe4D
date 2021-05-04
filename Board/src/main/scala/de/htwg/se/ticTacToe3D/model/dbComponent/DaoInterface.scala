@@ -7,4 +7,5 @@ trait DaoInterface {
   def getPlayers()
   def setPlayers(player1: PlayerInterface, player2: PlayerInterface)
   def saveGame(game: GameInterface)
+  def loadGame(game: GameInterface)
 }
