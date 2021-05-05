@@ -13,12 +13,11 @@ object TicTacToe {
   var service: TicTacToeService = new TicTacToeService
 
   val tui = new Tui(controller)
-  val gui = new TicTacToeGUI(controller)
+  //val gui = new TicTacToeGUI(controller)
   controller.notifyObservers
 
   def main(args: Array[String]): Unit = {
     service.start()
-    /*
     var input: String = if (args == null || args.isEmpty) "" else args(0)
     if (!input.isEmpty) tui.processInputLine(input)
     else do {
@@ -26,6 +25,5 @@ object TicTacToe {
       tui.processInputLine(input)
     } while (input != "q")
 
-     */
   }
 }

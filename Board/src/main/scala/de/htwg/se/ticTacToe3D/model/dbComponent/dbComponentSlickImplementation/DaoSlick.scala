@@ -33,14 +33,15 @@ case class DaoSlick() extends DaoInterface {
   override def getLastMoves(): Array[(Int, Int, Int, Int, Int)] = {
     println("Board: ")
     println("  " + "ID\t" + "GRID\t" + "COL\t" + "ROW\t" + "PLAYERID")
-    /*database.run(MovesTable.result).map(_.foreach {
+    database.run(MovesTable.result).map(_.foreach {
       case (id, grid, col, row, playerId) =>
         println("  " + id + "\t" + grid + "\t" + col + "\t" + row + "\t" + playerId)
-    })*/
+    })
     Await.result(database.run(MovesTable.result), Duration.Inf).toArray
   }
 
   override def setPlayers(player1: PlayerInterface, player2: PlayerInterface): Unit = {
+    database.run(playersTable.delete)
     database.run(playersTable ++= Seq(
       (0, player1.name, player1.symbol),
       (1, player2.name, player2.symbol)
@@ -49,20 +50,20 @@ case class DaoSlick() extends DaoInterface {
   override def getPlayers(): Array[(Int, String, String)] = {
     println("Players: ")
     println("  " + "ID\t" + "NAME\t" + "SYMBOL")
-    /*database.run(playersTable.result).map(_.foreach {
+    database.run(playersTable.result).map(_.foreach {
       case (id, name, symbol) =>
         println("  " + id + "\t" + name + "\t" + symbol)
-    })*/
+    })
     Await.result(database.run(playersTable.result), Duration.Inf).toArray
   }
 
   def getPlayerById(id: Int): Option[(Int, String, String)] = {
     println("Player: ")
     println("  " + "ID\t" + "NAME\t" + "SYMBOL")
-    /*database.run(playersTable.result).map(_.foreach {
+    database.run(playersTable.result).map(_.foreach {
       case (id, name, symbol) =>
         println("  " + id + "\t" + name + "\t" + symbol)
-    })*/
+    })
     Await.result(database.run(playersTable.filter(_.id === id).result.headOption), Duration.Inf)
   }
 
@@ -72,12 +73,11 @@ case class DaoSlick() extends DaoInterface {
       (0, game.players(0).name, game.players(0).symbol),
       (1, game.players(1).name, game.players(1).symbol)
     ))
-    // STILL NEED TO DO SOME STUFF
     var i = 0
     for (grid <- game.grids.indices) {
       println("Grids: " + grid)
       for {
-        row <- 0 until game.grids(grid).size;
+        row <- 0 until game.grids(grid).size
         col <- 0 until game.grids(grid).size
       } yield {
         if (game.grids(grid).cell(row, col).isSet) {

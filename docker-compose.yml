@@ -44,6 +44,7 @@ services:
     image: tictactoe3d:1.0
     container_name: tictactoe3d
     stdin_open: true
+    tty: true
     depends_on:
       - game-service
       - checkwin-service
