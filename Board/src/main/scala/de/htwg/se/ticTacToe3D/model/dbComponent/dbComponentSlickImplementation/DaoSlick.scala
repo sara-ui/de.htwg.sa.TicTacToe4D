@@ -1,7 +1,7 @@
 package de.htwg.se.ticTacToe3D.model.dbComponent.dbComponentSlickImplementation
 
 import de.htwg.se.ticTacToe3D.model.dbComponent.DaoInterface
-import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Player
+import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
 import de.htwg.se.ticTacToe3D.model.gameComponent.{GameInterface, PlayerInterface}
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.PostgresProfile.api._
@@ -30,13 +30,14 @@ case class DaoSlick() extends DaoInterface {
 
   tables.foreach(e => Await.result(database.run(e.schema.createIfNotExists), Duration.Inf))
 
-  override def getLastMoves(): Unit = {
+  override def getLastMoves(): Array[(Int, Int, Int, Int, Int)] = {
     println("Board: ")
     println("  " + "ID\t" + "GRID\t" + "COL\t" + "ROW\t" + "PLAYERID")
-    database.run(MovesTable.result).map(_.foreach {
+    /*database.run(MovesTable.result).map(_.foreach {
       case (id, grid, col, row, playerId) =>
         println("  " + id + "\t" + grid + "\t" + col + "\t" + row + "\t" + playerId)
-    })
+    })*/
+    Await.result(database.run(MovesTable.result), Duration.Inf).toArray
   }
 
   override def setPlayers(player1: PlayerInterface, player2: PlayerInterface): Unit = {
@@ -45,13 +46,24 @@ case class DaoSlick() extends DaoInterface {
       (1, player2.name, player2.symbol)
     ))
   }
-  override def getPlayers(): Unit = {
+  override def getPlayers(): Array[(Int, String, String)] = {
     println("Players: ")
     println("  " + "ID\t" + "NAME\t" + "SYMBOL")
-    database.run(playersTable.result).map(_.foreach {
+    /*database.run(playersTable.result).map(_.foreach {
       case (id, name, symbol) =>
         println("  " + id + "\t" + name + "\t" + symbol)
-    })
+    })*/
+    Await.result(database.run(playersTable.result), Duration.Inf).toArray
+  }
+
+  def getPlayerById(id: Int): Option[(Int, String, String)] = {
+    println("Player: ")
+    println("  " + "ID\t" + "NAME\t" + "SYMBOL")
+    /*database.run(playersTable.result).map(_.foreach {
+      case (id, name, symbol) =>
+        println("  " + id + "\t" + name + "\t" + symbol)
+    })*/
+    Await.result(database.run(playersTable.filter(_.id === id).result.headOption), Duration.Inf)
   }
 
   override def saveGame(game: GameInterface): Unit = {
@@ -61,15 +73,47 @@ case class DaoSlick() extends DaoInterface {
       (1, game.players(1).name, game.players(1).symbol)
     ))
     // STILL NEED TO DO SOME STUFF
-    for (x <- 0 to game.grids.length) {
-      println("Grids: " + x)
-      for (y <- 0 to x) {
-        println("Cells: " + y)
+    var i = 0
+    for (grid <- game.grids.indices) {
+      println("Grids: " + grid)
+      for {
+        row <- 0 until game.grids(grid).size;
+        col <- 0 until game.grids(grid).size
+      } yield {
+        if (game.grids(grid).cell(row, col).isSet) {
+          val id = if(game.grids(grid).cell(row, col).value == game.getPlayer(0).symbol) 0 else 1
+          database.run(MovesTable += (i, grid, col, row, id))
+          i += 1
+        }
       }
     }
   }
 
-  override def loadGame(game: GameInterface): Unit = {
+  override def loadGame(game: GameInterface): GameInterface = {
+    var game: GameInterface = new Game()
+    val players = getPlayers()
+    game = game.setPlayers(players(0)._2, players(1)._2, players(0)._3, players(1)._3)
+
+    val lastMoves = getLastMoves()
+    for (grid <- game.grids.indices) {
+      println("Grids: " + grid)
+      for {
+        row <- 0 until game.grids(grid).size;
+        col <- 0 until game.grids(grid).size
+      } yield {
+        val value = lastMoves.find(elem => elem._2 == grid && elem._3 == col & elem._4 == row)
+        if (value.nonEmpty) {
+          val player = getPlayerById(value.get._5)
+          game.set(
+            row,
+            col,
+            grid,
+            player.get._1
+          )
+        }
+      }
+    }
+    game
 
   }
 }
