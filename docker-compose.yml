@@ -10,6 +10,18 @@ services:
       POSTGRES_USER: "test"
       POSTGRES_PASSWORD: "user"
 
+
+  mongodb:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: mydb
+    ports:
+    - 27017:27017
+
+
   board-service:
     build:
       context: ./Board
