@@ -22,7 +22,7 @@ case class MongoDao() extends DaoMongoInterface {
   val mongoClient: MongoClient = MongoClient(uri)
 
   val database: MongoDatabase = mongoClient.getDatabase("mydb")
-  val collection: MongoCollection[Document] = database.getCollection("MongoDBTicTacToe")
+  val collection: MongoCollection[Document] = database.getCollection("MongoDBFileIO")
 
   override def create(game: String): Unit = {
     saveGame(game)

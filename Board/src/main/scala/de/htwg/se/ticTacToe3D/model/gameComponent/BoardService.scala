@@ -9,6 +9,7 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import com.google.inject.{Guice, Injector}
 import de.htwg.se.ticTacToe3D.model.dbComponent.DaoInterface
+import de.htwg.se.ticTacToe3D.model.dbComponent.dbComponentMongoDBImplementation.MongoDao
 import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
 
 case object BoardService {
@@ -21,6 +22,8 @@ case object BoardService {
 
     val injector: Injector = Guice.createInjector(new BoardModule)
     val db: DaoInterface = injector.getInstance(classOf[DaoInterface])
+
+    val mongoDB: DaoInterface = injector.getInstance(classOf[MongoDao])
 
     var game: GameInterface = new Game()
     game.board(game, turn = true)
@@ -46,7 +49,8 @@ case object BoardService {
                 game = new Game()
                 game = game.setPlayers(player1, player2, "X", "O")
                 game.board(game, myTurn)
-                db.setPlayers(game.getPlayer(0), game.getPlayer(1))
+                mongoDB.setPlayers(game.getPlayer(0), game.getPlayer(1))
+                //db.setPlayers(game.getPlayer(0), game.getPlayer(1))
                 complete(HttpEntity(ContentTypes.`application/json`, game.loadBoardJson()))
             }
           }
@@ -85,15 +89,17 @@ case object BoardService {
           }
         },
         (get & path("game" / "database" / "save")) {
-          db.saveGame(game)
-          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, db.saveGame(game).toString))
+          mongoDB.saveGame(game)
+          //db.saveGame(game)
+          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, mongoDB.saveGame(game).toString))
         },
         (get & path("game" / "database" / "load")) {
-          game = db.loadGame(game)
+          game = mongoDB.loadGame(game)
+          //game = db.loadGame(game)
           complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, db.loadGame(game).customToString))
         },
         (get & path("game" / "database" / "players")) {
-          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, db.getPlayers().mkString("Array(", ", ", ")")))
+          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, mongoDB.getPlayers().mkString("Array(", ", ", ")")))
         },
         (get & path("game" / "database" / "moves")) {
           complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, db.getLastMoves().mkString("Array(", ", ", ")")))

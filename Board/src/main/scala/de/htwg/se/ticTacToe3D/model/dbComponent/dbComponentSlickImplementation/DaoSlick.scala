@@ -114,6 +114,5 @@ case class DaoSlick() extends DaoInterface {
       }
     }
     game
-
   }
 }

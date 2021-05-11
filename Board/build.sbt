@@ -16,6 +16,7 @@ libraryDependencies += "com.typesafe.slick" %% "slick" % "3.3.2"
 libraryDependencies += "org.slf4j" % "slf4j-nop" % "1.7.30"
 libraryDependencies += "com.typesafe.slick" %% "slick" % "3.3.2"
 libraryDependencies += "org.postgresql" % "postgresql" % "9.4-1200-jdbc41"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.2.3"
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.1.1"
 libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.6"
