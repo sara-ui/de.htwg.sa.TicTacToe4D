@@ -12,10 +12,10 @@ import akka.http.scaladsl.server.Directives._
 import com.google.inject.{Guice, Injector}
 import de.htwg.se.ticTacToe3D.model.fileIoComponent.dbComponent.DaoMongoInterface
 import de.htwg.se.ticTacToe3D.model.fileIoComponent.dbComponent.mongoDBImplementation.MongoDao
-
-import scala.io.StdIn
 import de.htwg.se.ticTacToe3D.model.fileIoComponent.fileIoJsonImpl.FileIO
-import de.htwg.se.ticTacToe3D.model.gameComponent.BoardModule
+import de.htwg.se.ticTacToe3D.model.gameComponent.GameInterface
+import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
+import play.api.libs.json.Json
 
 case object FileIoService {
 
@@ -25,20 +25,26 @@ case object FileIoService {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.executionContext
 
-    val injector: Injector = Guice.createInjector(new BoardModule)
+    val emptyGame: GameInterface = new Game()
+
+    val injector: Injector = Guice.createInjector(new IoModule)
     val mongoDB: DaoMongoInterface = injector.getInstance(classOf[MongoDao])
+
+    mongoDB.create(Json.stringify(emptyGame.boardToJson(emptyGame, turn = false)))
 
     val route =
       concat (
         get {
           path("game") {
-            complete(HttpEntity(ContentTypes.`application/json`, FileIO().loadJson()))
+            complete(HttpEntity(ContentTypes.`application/json`, mongoDB.read()))
+            //complete(HttpEntity(ContentTypes.`application/json`, FileIO().loadJson()))
           }
         },
         post {
           path("game") {
             entity(as [String]) { game =>
-              FileIO().save(game)
+              mongoDB.update(game)
+              //FileIO().save(game)
               complete("game saved")
             }
           }

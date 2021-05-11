@@ -3,9 +3,11 @@ package de.htwg.se.ticTacToe3D.model.fileIoComponent.dbComponent.mongoDBImplemen
 import com.mongodb.{MongoClientSettings, ServerAddress}
 import de.htwg.se.ticTacToe3D.model.fileIoComponent.dbComponent.DaoMongoInterface
 import de.htwg.se.ticTacToe3D.model.fileIoComponent.dbComponent.mongoDBImplementation.Helpers._
+import de.htwg.se.ticTacToe3D.model.fileIoComponent.fileIoJsonImpl.FileIO
 import de.htwg.se.ticTacToe3D.model.gameComponent.GameInterface
 import org.mongodb.scala._
 import org.mongodb.scala.connection.ClusterSettings
+import org.mongodb.scala.model.Filters
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Updates.{combine, set}
 import org.mongodb.scala.result._
@@ -15,16 +17,12 @@ import scala.collection.JavaConverters._
 
 case class MongoDao() extends DaoMongoInterface {
 
-  val mongoClient: MongoClient = MongoClient(
-    MongoClientSettings.builder()
-      .applyToClusterSettings((builder: ClusterSettings.Builder) => builder.hosts(List(new ServerAddress("localhost", 27017)).asJava))
-      .build()
-  )
-  //System.setProperty("org.mongodb.async.type", "netty")
+  val uri: String = "mongodb://root:rootpassword@mongodb:27017/"
+
+  val mongoClient: MongoClient = MongoClient(uri)
 
   val database: MongoDatabase = mongoClient.getDatabase("mydb")
-  database.createCollection("test")
-  val collection: MongoCollection[Document] = database.getCollection("test")
+  val collection: MongoCollection[Document] = database.getCollection("MongoDBTicTacToe")
 
   override def create(game: String): Unit = {
     saveGame(game)
@@ -46,8 +44,14 @@ case class MongoDao() extends DaoMongoInterface {
     })
   }
 
-  def createAndInsertDocument(json : String): Document = {
-    Document(json)
+  def createAndInsertDocument(game: String): Document = {
+    var document: Document = Document(game)
+    document
+  }
+
+  override def update(game: String): Unit = {
+    delete()
+    saveGame(game)
   }
 
   def printCollection(): Unit = collection.find().printResults()
@@ -59,28 +63,8 @@ case class MongoDao() extends DaoMongoInterface {
     collection.find().first().toString
   }
 
-
-  //Might not need it
-  override def update(game: String): Unit = {
-    val observable: Observable[UpdateResult] = collection.updateOne(empty(), combine(Document(game)))
-    observable.printHeadResult("Update Result: ")
-
-    observable.subscribe(new Observer[UpdateResult] {
-      override def onSubscribe(subscription: Subscription): Unit = subscription.request(1)
-
-      override def onNext(result: UpdateResult): Unit = println(s"onNext $result")
-
-      override def onError(e: Throwable): Unit = println("Failed")
-
-      override def onComplete(): Unit = println("Completed")
-    })
-  }
-
-  /*
-  DELETE ALL ENTRIES
-   */
   override def delete(): Unit = {
-    val observable: Observable[DeleteResult] = collection.deleteOne(empty())
+    val observable: Observable[DeleteResult] = collection.deleteMany(empty())
     observable.printHeadResult("Delete Result: ")
 
     observable.subscribe(new Observer[DeleteResult] {

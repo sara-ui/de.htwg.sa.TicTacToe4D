@@ -19,7 +19,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: rootpassword
       MONGO_INITDB_DATABASE: mydb
     ports:
-    - 27017:27017
+    - '27017:27017'
 
 
   board-service:
