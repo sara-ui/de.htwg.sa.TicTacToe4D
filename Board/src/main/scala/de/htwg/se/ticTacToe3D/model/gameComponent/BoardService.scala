@@ -49,8 +49,8 @@ case object BoardService {
                 game = new Game()
                 game = game.setPlayers(player1, player2, "X", "O")
                 game.board(game, myTurn)
-                mongoDB.setPlayers(game.getPlayer(0), game.getPlayer(1))
-                //db.setPlayers(game.getPlayer(0), game.getPlayer(1))
+                //mongoDB.setPlayers(game.getPlayer(0), game.getPlayer(1))
+                db.setPlayers(game.getPlayer(0), game.getPlayer(1))
                 complete(HttpEntity(ContentTypes.`application/json`, game.loadBoardJson()))
             }
           }
@@ -89,17 +89,17 @@ case object BoardService {
           }
         },
         (get & path("game" / "database" / "save")) {
-          mongoDB.saveGame(game)
-          //db.saveGame(game)
-          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, mongoDB.saveGame(game).toString))
+          //mongoDB.saveGame(game)
+          db.saveGame(game)
+          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, db.saveGame(game).toString))
         },
         (get & path("game" / "database" / "load")) {
-          game = mongoDB.loadGame(game)
-          //game = db.loadGame(game)
+          //game = mongoDB.loadGame(game)
+          game = db.loadGame(game)
           complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, db.loadGame(game).customToString))
         },
         (get & path("game" / "database" / "players")) {
-          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, mongoDB.getPlayers().mkString("Array(", ", ", ")")))
+          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, db.getPlayers().mkString("Array(", ", ", ")")))
         },
         (get & path("game" / "database" / "moves")) {
           complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, db.getLastMoves().mkString("Array(", ", ", ")")))
