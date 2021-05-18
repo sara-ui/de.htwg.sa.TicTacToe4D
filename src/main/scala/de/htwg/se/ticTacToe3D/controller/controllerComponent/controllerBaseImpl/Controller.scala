@@ -25,6 +25,9 @@ class Controller @Inject() (var game: GameInterface)
   var won: Array[Boolean] = Array(false, false)
   var myTurn: Boolean = true
   var statusMessage: String = Messages.WELCOME_MESSAGE
+  implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+  implicit val executionContext = system.executionContext
 
   val checkWinServiceUrl: String = "http://checkwin-service:9090/"
   val gameServiceUrl: String = "http://game-service:9090/"
@@ -44,10 +47,6 @@ class Controller @Inject() (var game: GameInterface)
     Success(true)
   }
   def checkForWin(i: Int, row: Int, column: Int, grid: Int): Boolean = {
-
-    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-
-    implicit val executionContext = system.executionContext
 
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
@@ -109,10 +108,6 @@ class Controller @Inject() (var game: GameInterface)
   }
 
   def save = {
-    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-
-    implicit val executionContext = system.executionContext
-
     val gameAsJson = Json.prettyPrint(gameToJson(game, this.myTurn))
 
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
@@ -125,10 +120,6 @@ class Controller @Inject() (var game: GameInterface)
   }
 
   def load = {
-    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-
-    implicit val executionContext = system.executionContext
-
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       uri = gameServiceUrl + "game"
     ))
@@ -216,10 +207,6 @@ class Controller @Inject() (var game: GameInterface)
     }
   }
   private def tryToMove(playerIndex: Int, row: Int, column: Int, grid: Int): Boolean = {
-    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-
-    implicit val executionContext = system.executionContext
-
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
       uri = boardServiceUrl + s"cellIsSet?row=$row&col=$column&grid=$grid"
@@ -259,9 +246,6 @@ class Controller @Inject() (var game: GameInterface)
   }
 
   def restart: Boolean = {
-    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-
-    implicit val executionContext = system.executionContext
     if (game.players.contains(null) || "".equals(game.players(0).name)) {
       this.statusMessage = Messages.ERROR_GIVE_PLAYERS_RESET
     } else {
@@ -306,10 +290,6 @@ class Controller @Inject() (var game: GameInterface)
       this.statusMessage = Messages.PLAYER_NAME
       notifyObservers
     } else {
-      implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-
-      implicit val executionContext = system.executionContext
-
       val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
         method = HttpMethods.POST,
         uri = boardServiceUrl + s"board/setPlayers?player1=$player1&player2=$player2&myTurn=$myTurn"
@@ -335,10 +315,6 @@ class Controller @Inject() (var game: GameInterface)
   }
 
   def getLastMoves(): Unit = {
-    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-
-    implicit val executionContext = system.executionContext
-
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
       uri = boardServiceUrl + "game/database/moves"
@@ -346,10 +322,6 @@ class Controller @Inject() (var game: GameInterface)
   }
 
   def getPlayers(): Unit = {
-    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-
-    implicit val executionContext = system.executionContext
-
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
       uri = boardServiceUrl + "game/database/players"
@@ -357,10 +329,6 @@ class Controller @Inject() (var game: GameInterface)
   }
 
   def saveGameToDB(): Unit = {
-    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-
-    implicit val executionContext = system.executionContext
-
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
       uri = boardServiceUrl + "game/database/save"
@@ -368,10 +336,6 @@ class Controller @Inject() (var game: GameInterface)
   }
 
   def loadGameToDB(): Unit = {
-    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-
-    implicit val executionContext = system.executionContext
-
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
       uri = boardServiceUrl + "game/database/load"

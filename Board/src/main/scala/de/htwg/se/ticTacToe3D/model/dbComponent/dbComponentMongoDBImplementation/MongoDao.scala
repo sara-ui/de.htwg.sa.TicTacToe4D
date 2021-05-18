@@ -45,7 +45,6 @@ case class MongoDao() extends DaoInterface {
       case Success(value) => Some(value.toJson())
       case Failure(exception) => println("ERROR")
     })
-    println(levelDocument)
     val json: JsValue = Json.parse(levelDocument.toString)
     println(json)
     // players

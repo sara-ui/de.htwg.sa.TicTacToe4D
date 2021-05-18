@@ -41,7 +41,7 @@ case class DaoSlick() extends DaoInterface {
   }
 
   override def setPlayers(player1: PlayerInterface, player2: PlayerInterface): Unit = {
-    database.run(playersTable.delete)
+    tables.foreach(e => database.run(e.delete))
     database.run(playersTable ++= Seq(
       (0, player1.name, player1.symbol),
       (1, player2.name, player2.symbol)
@@ -98,7 +98,7 @@ case class DaoSlick() extends DaoInterface {
     for (grid <- game.grids.indices) {
       println("Grids: " + grid)
       for {
-        row <- 0 until game.grids(grid).size;
+        row <- 0 until game.grids(grid).size
         col <- 0 until game.grids(grid).size
       } yield {
         val value = lastMoves.find(elem => elem._2 == grid && elem._3 == col & elem._4 == row)

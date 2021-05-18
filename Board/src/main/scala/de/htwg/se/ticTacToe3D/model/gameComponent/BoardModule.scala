@@ -9,7 +9,7 @@ import net.codingwell.scalaguice.ScalaModule
 case class BoardModule() extends AbstractModule with ScalaModule {
 
   override def configure() = {
-    bind[DaoInterface].toInstance(DaoSlick())
-    //bind[DaoInterface].toInstance(MongoDao())
+    //bind[DaoInterface].toInstance(DaoSlick())
+    bind[DaoInterface].toInstance(MongoDao())
   }
 }

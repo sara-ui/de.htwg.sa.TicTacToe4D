@@ -12,11 +12,11 @@ import scala.util.{Failure, Success}
 
 class SetCommand(row:Int, col: Int, grid:Int, playerIndex:Int, controller: Controller) extends Command {
   val boardServiceUrl: String = "http://board-service:9090/"
+  implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
+
+  implicit val executionContext = system.executionContext
+
   override def doStep: Unit = {
-    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-
-    implicit val executionContext = system.executionContext
-
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.POST,
       uri = boardServiceUrl + s"board/setCell?row=$row&col=$col&grid=$grid&playerIndex=$playerIndex&myTurn=${controller.myTurn}"
@@ -39,10 +39,6 @@ class SetCommand(row:Int, col: Int, grid:Int, playerIndex:Int, controller: Contr
   }
 
   override def undoStep: Unit = {
-    implicit val system = ActorSystem(Behaviors.empty, "SingleRequest")
-
-    implicit val executionContext = system.executionContext
-
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.POST,
       uri = boardServiceUrl + s"/board/resetCell?row=$row&col=$col&grid=$grid&myTurn=${controller.myTurn}"

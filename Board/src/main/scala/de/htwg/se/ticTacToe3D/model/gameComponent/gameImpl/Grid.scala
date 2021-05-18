@@ -15,6 +15,8 @@ case class Grid(
 
   def set(row:Int, col:Int, value:String): Grid = copy(cells.updated(row, cells(row).updated(col, Cell(value))))
 
+  //THE FIRST TIME THIS GETS CALLED IT PERFORMES NOT GOOD??
+  //FOLD LEFT PERFORMES A LITTLE BIT BETTER THAN A FOR LOOP
   private def spacing(size: Int): String = {
     Range(0,size).foldLeft(" ")((str, _) => str + " ")
   }
