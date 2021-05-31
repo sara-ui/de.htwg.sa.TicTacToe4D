@@ -60,19 +60,19 @@ case class TicTacToeService() {
         },
         (get & path("game" / "database" / "moves")) {
           controller.getLastMoves()
-          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, controller.game.customToString))
+          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, controller.getLastMoves()))
         },
         (get & path("game" / "database" / "players")) {
           controller.getPlayers()
-          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, controller.game.playersToString))
+          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, controller.getPlayers()))
         },
         (get & path("game" / "database" / "save")) {
           controller.saveGameToDB()
-          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, controller.game.customToString))
+          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, controller.saveGameToDB()))
         },
         (get & path("game" / "database" / "load")) {
           controller.loadGameToDB()
-          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, controller.game.customToString))
+          complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, controller.loadGameToDB()))
         },
       )
 

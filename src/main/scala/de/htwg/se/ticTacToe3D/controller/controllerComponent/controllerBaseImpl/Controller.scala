@@ -13,7 +13,8 @@ import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
 import de.htwg.se.ticTacToe3D.util.UndoManager
 import play.api.libs.json.{JsValue, Json}
 
-import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 
 
@@ -38,16 +39,15 @@ class Controller @Inject() (var game: GameInterface)
     true
   }
 
-  def checkData(row: Int, column: Int, grid: Int): Try[Boolean] = {
+  def checkData(row: Int, column: Int, grid: Int): Future[Boolean] = {
     if(row > 3 || column > 3 || grid > 3){
       statusMessage =  Messages.ERROR_MOVE
       notifyObservers
-      return Failure(new Exception(Messages.ERROR_MOVE))
+      return Future.failed(new Exception(Messages.ERROR_MOVE))
     }
-    Success(true)
+    Future.successful(true)
   }
   def checkForWin(i: Int, row: Int, column: Int, grid: Int): Boolean = {
-
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
       uri =  checkWinServiceUrl + s"checkWin?i=$i&row=$row&column=$column&grid=$grid"
@@ -55,18 +55,16 @@ class Controller @Inject() (var game: GameInterface)
 
     responseFuture.onComplete {
       case Failure(_) => sys.error("Error checking for Win")
-      case Success(value) => {
+      case Success(value) =>
         Unmarshal(value.entity).to[String].onComplete {
           case Failure(_) => sys.error("Failed unmarshalling")
-          case Success(value) => {
+          case Success(value) =>
             if (value == "true") {
               this.statusMessage = game.players(i).name + Messages.WIN_MESSAGE
               notifyObservers
               true
             }
-          }
         }
-      }
     }
     true
   }
@@ -115,8 +113,13 @@ class Controller @Inject() (var game: GameInterface)
       uri = gameServiceUrl + "game",
       entity = gameAsJson
     ))
-    statusMessage = Messages.GAME_SAVED
-    notifyObservers
+    responseFuture.onComplete {
+      case Failure(_) => sys.error("Error saving the Game")
+      case Success(value) =>
+        println("Successfully saved the game!! (" + value +  ")")
+        statusMessage = Messages.GAME_SAVED
+        notifyObservers
+    }
   }
 
   def load = {
@@ -127,18 +130,16 @@ class Controller @Inject() (var game: GameInterface)
     responseFuture
       .onComplete {
         case Failure(_) => sys.error("Failed getting Json")
-        case Success(value) => {
+        case Success(value) =>
           Unmarshal(value.entity).to[String].onComplete {
             case Failure(_) => sys.error("Failed unmarshalling")
-            case Success(value) => {
+            case Success(value) =>
               val (loadedGame, turn) = unmarshall(value)
               game = loadedGame
               statusMessage = Messages.GAME_LOADED + "\n" +  getNextPlayer(if(turn) 0 else 1) + Messages.YOU_ARE_NEXT
               notifyObservers
-            }
           }
-        }
-    }
+      }
   }
 
   def unmarshall(gameAsJson: String): (GameInterface, Boolean) = {
@@ -181,19 +182,17 @@ class Controller @Inject() (var game: GameInterface)
       notifyObservers
       return false
     }
-    val checkCell: Try[Boolean] = checkData(row, column, grid).map(valid => valid)
-    checkCell match {
-      case Success(x) =>
-        if (myTurn) {
-          tryToMove(0, row, column, grid)
-          checkForWin(0, row, column, grid)
-        } else {
-          tryToMove(1, row, column, grid)
-          checkForWin(1, row, column, grid)
-        }
-      case Failure(error) =>
-        Failure(new Exception(error.getMessage))
-        return false
+    //MAYBE DOES NOT WORK LIKE THAT
+    val checkCell: Future[Boolean] = checkData(row, column, grid)
+    checkCell.foreach { valid =>
+      println(valid)
+      if (myTurn) {
+        tryToMove(0, row, column, grid)
+        checkForWin(0, row, column, grid)
+      } else {
+        tryToMove(1, row, column, grid)
+        checkForWin(1, row, column, grid)
+      }
     }
     myTurn = !myTurn
     true
@@ -214,10 +213,10 @@ class Controller @Inject() (var game: GameInterface)
 
     responseFuture.onComplete {
       case Failure(_) => sys.error("Error checking for Cell")
-      case Success(value) => {
+      case Success(value) =>
         Unmarshal(value.entity).to[String].onComplete {
           case Failure(_) => sys.error("Failed unmarshalling")
-          case Success(value) => {
+          case Success(value) =>
             if (value == "true") {
               this.myTurn = !this.myTurn
               this.statusMessage = Messages.CELL_IS_SET
@@ -225,9 +224,7 @@ class Controller @Inject() (var game: GameInterface)
               undoManager.doStep(new SetCommand(row, column, grid, playerIndex, this))
               this.statusMessage = Messages.playerMoveToString(game.players(playerIndex).name, row, column, grid) + getNextPlayer(playerIndex) + Messages.NEXT
             }
-          }
         }
-      }
     }
     true
   }
@@ -262,17 +259,15 @@ class Controller @Inject() (var game: GameInterface)
       responseFutureBoard
         .onComplete {
           case Failure(_) => sys.error("Failed restarting")
-          case Success(value) => {
+          case Success(value) =>
             Unmarshal(value.entity).to[String].onComplete {
               case Failure(_) => sys.error("Failed unmarshalling")
-              case Success(value) => {
+              case Success(value) =>
                 val (loadedGame, turn) = unmarshall(value)
                 game = loadedGame
                 notifyObservers
                 this.statusMessage = Messages.GAME_RESET_MESSAGE + game.players(0).name + Messages.INFO_ABOUT_THE_GAME
-              }
             }
-          }
         }
     }
     true
@@ -298,48 +293,64 @@ class Controller @Inject() (var game: GameInterface)
       responseFuture
         .onComplete {
           case Failure(_) => sys.error("Failed setting Players")
-          case Success(value) => {
+          case Success(value) =>
             Unmarshal(value.entity).to[String].onComplete {
               case Failure(_) => sys.error("Failed unmarshalling")
-              case Success(value) => {
+              case Success(value) =>
                 val (loadedGame, turn) = unmarshall(value)
                 game = loadedGame
                 statusMessage = Messages.PLAYER_DEFINED_MESSAGE + player1 + Messages.INFO_ABOUT_THE_GAME
                 notifyObservers
-              }
             }
-          }
         }
     }
     true
   }
 
-  def getLastMoves(): Unit = {
+  def unMarshallFutureCall(future: Future[HttpResponse]): String = {
+    var string = ""
+    future.foreach { dbCall =>
+      println(dbCall)
+      Unmarshal(dbCall.entity).to[String].onComplete {
+        case Failure(_) => sys.error("Failed unmarshalling")
+        case Success(value) =>
+          string = value
+      }
+    }
+    Await.result(future, 5000 millis)
+    string
+  }
+
+  def getLastMoves(): String = {
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
       uri = boardServiceUrl + "game/database/moves"
     ))
+    unMarshallFutureCall(responseFuture)
   }
 
-  def getPlayers(): Unit = {
+  def getPlayers(): String = {
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
       uri = boardServiceUrl + "game/database/players"
     ))
+    unMarshallFutureCall(responseFuture)
   }
 
-  def saveGameToDB(): Unit = {
+  def saveGameToDB(): String = {
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
       uri = boardServiceUrl + "game/database/save"
     ))
+    unMarshallFutureCall(responseFuture)
   }
 
-  def loadGameToDB(): Unit = {
+  def loadGameToDB(): String = {
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
       uri = boardServiceUrl + "game/database/load"
     ))
+    unMarshallFutureCall(responseFuture)
   }
 }
 

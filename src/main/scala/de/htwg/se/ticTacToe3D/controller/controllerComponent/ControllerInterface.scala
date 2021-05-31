@@ -3,12 +3,13 @@ package de.htwg.se.ticTacToe3D.controller.controllerComponent
 import de.htwg.se.ticTacToe3D.model.gameComponent.GameInterface
 import de.htwg.se.ticTacToe3D.util.Observable
 
+import scala.concurrent.Future
 import scala.util.Try
 
 trait ControllerInterface extends Observable{
   def game: GameInterface
   def exit: Boolean
-  def checkData(row: Int, column: Int, grid: Int): Try[Boolean]
+  def checkData(row: Int, column: Int, grid: Int): Future[Boolean]
   def checkForWin(i: Int, row: Int, column: Int, grid: Int): Boolean
   def setValue(row: Int, column: Int, grid: Int): Boolean
   def toString: String
@@ -22,8 +23,8 @@ trait ControllerInterface extends Observable{
   def won: Array[Boolean]
   def setPlayers (player1: String, player2: String): Boolean
   def statusMessage: String
-  def getLastMoves(): Unit
-  def getPlayers(): Unit
-  def saveGameToDB(): Unit
-  def loadGameToDB(): Unit
+  def getLastMoves(): String
+  def getPlayers(): String
+  def saveGameToDB(): String
+  def loadGameToDB(): String
 }

@@ -25,16 +25,14 @@ class SetCommand(row:Int, col: Int, grid:Int, playerIndex:Int, controller: Contr
     responseFuture
       .onComplete {
         case Failure(_) => sys.error("Failed setting Cell")
-        case Success(value) => {
+        case Success(value) =>
           Unmarshal(value.entity).to[String].onComplete {
             case Failure(_) => sys.error("Failed unmarshalling")
-            case Success(value) => {
+            case Success(value) =>
               val (loadedGame, turn) = controller.unmarshall(value)
               controller.game = loadedGame
               controller.notifyObservers
-            }
           }
-        }
       }
   }
 
@@ -47,15 +45,13 @@ class SetCommand(row:Int, col: Int, grid:Int, playerIndex:Int, controller: Contr
     responseFuture
       .onComplete {
         case Failure(_) => sys.error("Failed resetting Cell")
-        case Success(value) => {
+        case Success(value) =>
           Unmarshal(value.entity).to[String].onComplete {
             case Failure(_) => sys.error("Failed unmarshalling")
-            case Success(value) => {
+            case Success(value) =>
               val (loadedGame, turn) = controller.unmarshall(value)
               controller.game = loadedGame
-            }
           }
-        }
       }
   }
 

@@ -72,5 +72,5 @@ class DatabaseTest extends Simulation {
       http("DB_Load")
         .get("/game/database/load")
     )
-  setUp(scn.inject(atOnceUsers(100))).protocols(httpProtocol)
+  setUp(scn.inject(atOnceUsers(1))).protocols(httpProtocol)
 }
