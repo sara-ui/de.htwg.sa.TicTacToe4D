@@ -318,7 +318,7 @@ class Controller @Inject() (var game: GameInterface)
             string = value
         }
     }
-    Await.ready(future, Duration.Inf)
+    Await.ready(future, atMost = 10 seconds)
     string
   }
 
