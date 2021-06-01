@@ -1,6 +1,6 @@
 package de.htwg.se.ticTacToe3D.model
 
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.Future
 
 trait WinStateStrategyTemplate {
   val numberToWin: Int = 4
@@ -11,10 +11,10 @@ trait WinStateStrategyTemplate {
 
   def checkDiagonal(row: Int, column: Int, grid: Int): Boolean
 
-  def checkForWin(row:Int, column:Int, grid: Int): Try[Boolean] = {
+  def checkForWin(row:Int, column:Int, grid: Int): Future[Boolean] = {
     if (checkDiagonal(row, column, grid) || checkRow(row, grid) || checkColumn(row, column, grid)) {
-      return Success(true)
+      return Future.successful(true)
     }
-    Failure(new Exception("Not won yet"))
+    Future.failed(new Exception("Not won yet"))
   }
 }

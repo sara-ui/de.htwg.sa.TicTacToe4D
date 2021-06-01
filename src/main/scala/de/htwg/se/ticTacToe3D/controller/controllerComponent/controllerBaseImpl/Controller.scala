@@ -13,7 +13,7 @@ import de.htwg.se.ticTacToe3D.model.gameComponent.gameImpl.Game
 import de.htwg.se.ticTacToe3D.util.UndoManager
 import play.api.libs.json.{JsValue, Json}
 
-import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 
@@ -39,14 +39,6 @@ class Controller @Inject() (var game: GameInterface)
     true
   }
 
-  def checkData(row: Int, column: Int, grid: Int): Future[Boolean] = {
-    if(row > 3 || column > 3 || grid > 3){
-      statusMessage =  Messages.ERROR_MOVE
-      notifyObservers
-      return Future.failed(new Exception(Messages.ERROR_MOVE))
-    }
-    Future.successful(true)
-  }
   def checkForWin(i: Int, row: Int, column: Int, grid: Int): Boolean = {
     val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
@@ -176,13 +168,21 @@ class Controller @Inject() (var game: GameInterface)
       turn)
   }
 
+  def checkData(row: Int, column: Int, grid: Int): Future[Boolean] = {
+    if(row > 3 || column > 3 || grid > 3){
+      statusMessage =  Messages.ERROR_MOVE
+      notifyObservers
+      return Future.failed(new Exception(Messages.ERROR_MOVE))
+    }
+    Future.successful(true)
+  }
+
   def setValue(row: Int, column: Int, grid: Int): Boolean = {
     if (game.players.contains(null) || "".equals(game.players(0).name)) {
       statusMessage = Messages.ERROR_GIVE_PLAYERS_START
       notifyObservers
       return false
     }
-    //MAYBE DOES NOT WORK LIKE THAT
     val checkCell: Future[Boolean] = checkData(row, column, grid)
     checkCell.foreach { valid =>
       println(valid)
@@ -309,15 +309,16 @@ class Controller @Inject() (var game: GameInterface)
 
   def unMarshallFutureCall(future: Future[HttpResponse]): String = {
     var string = ""
-    future.foreach { dbCall =>
-      println(dbCall)
-      Unmarshal(dbCall.entity).to[String].onComplete {
-        case Failure(_) => sys.error("Failed unmarshalling")
-        case Success(value) =>
-          string = value
-      }
+    future.onComplete {
+      case Failure(_) => sys.error("Failed getting Database Call")
+      case Success(dbCall) =>
+        Unmarshal(dbCall.entity).to[String].onComplete {
+          case Failure(_) => sys.error("Failed unmarshalling")
+          case Success(value) =>
+            string = value
+        }
     }
-    Await.result(future, 5000 millis)
+    Await.ready(future, Duration.Inf)
     string
   }
 
